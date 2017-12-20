@@ -10,5 +10,11 @@ if (Number.isNaN(eventID * 1)) {
     process.exit(0);
 }
 let runner = new Runner(eventID);
-runner.run().then((v) => { console.log(v);process.exit(0); }).catch((v) => { console.log(v);process.exit(0); });
+runner.run().then((v) => { 
+    console.log(v);
+    process.exit(0); 
+}).catch((v) => { 
+    console.log(v);
+    process.exit(0); 
+});
 
