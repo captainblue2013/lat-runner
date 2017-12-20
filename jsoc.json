@@ -1,0 +1,199 @@
+{
+  "host": "",
+  "projectRoot": "/Users/lanhao/test/lat-runner",
+  "definitions": {
+    "error.COMMON_ERROR": {
+      "code": 1001500001,
+      "message": "[COMMON_ERROR]通用错误: ",
+      "data": null
+    },
+    "error.RANDOM_ERROR": {
+      "code": 1001500002,
+      "message": "[RANDOM_ERROR]随机错误: ",
+      "data": null
+    },
+    "error.UNFINISHED_TASK": {
+      "code": 1001409001,
+      "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+      "data": null
+    },
+    "error.UNHAPPY_ERROR": {
+      "code": 1001500003,
+      "message": "[UNHAPPY_ERROR]管理员不高兴: ",
+      "data": null
+    },
+    "error.INTERNAL_ERROR": {
+      "code": -1,
+      "message": "[INTERNAL_ERROR]Internal Error: ",
+      "data": null
+    },
+    "error.BAD_REQUEST": {
+      "code": -2,
+      "message": "[BAD_REQUEST]入参检测错误: ",
+      "data": null
+    },
+    "error.NOT_FOUND": {
+      "code": -3,
+      "message": "[NOT_FOUND]not found: ",
+      "data": null
+    }
+  },
+  "apis": {
+    "getTaskInfo": {
+      "name": "getTaskInfo",
+      "desc": "获取任务状态",
+      "group": "",
+      "request": {
+        "method": "get",
+        "uri": "/status",
+        "query": {
+          "eventID": {
+            "_type": "number",
+            "_default": 0,
+            "_desc": "key ",
+            "_range": [
+              0,
+              100
+            ]
+          }
+        },
+        "params": {},
+        "body": {}
+      },
+      "response": {
+        "body": {
+          "success": [
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 0
+              },
+              "data": {
+                "id": {
+                  "_type": "number"
+                },
+                "project": {
+                  "_type": "string"
+                },
+                "branch": {
+                  "_type": "string"
+                },
+                "hash": {
+                  "_type": "string"
+                },
+                "pusher": {
+                  "_type": "string"
+                },
+                "gitRemote": {
+                  "_type": "string"
+                },
+                "status": {
+                  "_type": "number"
+                },
+                "createTime": {
+                  "_type": "number"
+                },
+                "updateTime": {
+                  "_type": "number"
+                }
+              },
+              "message": {
+                "_type": "string"
+              }
+            }
+          ],
+          "failed": []
+        }
+      }
+    },
+    "hook": {
+      "name": "hook",
+      "desc": "创建push event",
+      "group": "",
+      "request": {
+        "method": "post",
+        "uri": "/hook",
+        "query": {},
+        "params": {},
+        "body": {
+          "repository": {
+            "full_name": {
+              "_type": "string",
+              "_default": "",
+              "_desc": "项目名 ",
+              "_length": [
+                1,
+                64
+              ]
+            },
+            "ssh_url": {
+              "_type": "string",
+              "_default": "",
+              "_desc": "项目git ",
+              "_length": [
+                0,
+                128
+              ]
+            }
+          },
+          "pusher": {
+            "name": {
+              "_type": "string",
+              "_default": "",
+              "_desc": "用户名字 ",
+              "_length": [
+                1,
+                64
+              ]
+            }
+          },
+          "ref": {
+            "_type": "string",
+            "_default": "",
+            "_desc": "分支 ",
+            "_length": [
+              1,
+              64
+            ]
+          },
+          "head_commit": {
+            "id": {
+              "_type": "string",
+              "_default": "",
+              "_desc": "哈希值 ",
+              "_length": [
+                1,
+                64
+              ]
+            }
+          }
+        }
+      },
+      "response": {
+        "body": {
+          "success": [
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 0
+              },
+              "data": {
+                "_type": "boolean"
+              },
+              "message": {
+                "_type": "string"
+              }
+            }
+          ],
+          "failed": [
+            {
+              "code": 1001409001,
+              "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+              "data": null
+            }
+          ]
+        }
+      }
+    }
+  }
+}

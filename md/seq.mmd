@@ -1,0 +1,11 @@
+sequenceDiagram
+    github -->> LAT : webhook nitify: {hash...}
+    
+    LAT ->> Log : Store
+
+    Note over LAT: test
+    LAT -->> Log: output
+    Note over LAT: build image
+    
+    LAT ->> Rancher: upgrade
+    LAT->> Log: update status
