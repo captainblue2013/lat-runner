@@ -14,12 +14,17 @@
     },
     "error.UNFINISHED_TASK": {
       "code": 1001409001,
-      "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+      "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
       "data": null
     },
     "error.UNHAPPY_ERROR": {
       "code": 1001500003,
       "message": "[UNHAPPY_ERROR]管理员不高兴: ",
+      "data": null
+    },
+    "error.FORBIDDEN": {
+      "code": 1001403001,
+      "message": "[FORBIDDEN]没有权限: ",
       "data": null
     },
     "error.INTERNAL_ERROR": {
@@ -106,6 +111,97 @@
         }
       }
     },
+    "listProject": {
+      "name": "listProject",
+      "desc": "查看当前项目状态",
+      "group": "",
+      "request": {
+        "method": "get",
+        "uri": "/project",
+        "query": {
+          "name": {
+            "_type": "string",
+            "_default": "",
+            "_desc": "按项目名搜索 ",
+            "_length": [
+              0,
+              64
+            ]
+          }
+        },
+        "params": {},
+        "body": {}
+      },
+      "response": {
+        "body": {
+          "success": [
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 0
+              },
+              "data": [
+                {
+                  "id": {
+                    "_type": "number"
+                  },
+                  "name": {
+                    "_type": "string"
+                  },
+                  "status": {
+                    "_type": "number"
+                  },
+                  "lastBuild": {
+                    "_type": "number"
+                  },
+                  "createTime": {
+                    "_type": "number"
+                  },
+                  "updateTime": {
+                    "_type": "number"
+                  }
+                }
+              ],
+              "message": {
+                "_type": "string"
+              }
+            },
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 0
+              },
+              "data": [
+                {
+                  "id": {
+                    "_type": "number"
+                  },
+                  "name": {
+                    "_type": "string"
+                  },
+                  "status": {
+                    "_type": "number"
+                  },
+                  "lastBuild": {
+                    "_type": "number"
+                  },
+                  "createTime": {
+                    "_type": "number"
+                  },
+                  "updateTime": {
+                    "_type": "number"
+                  }
+                }
+              ],
+              "message": {
+                "_type": "string"
+              }
+            }
+          ],
+          "failed": []
+        }
+      }
+    },
     "hook": {
       "name": "hook",
       "desc": "创建push event",
@@ -178,7 +274,33 @@
                 "_assert": 0
               },
               "data": {
-                "_type": "boolean"
+                "id": {
+                  "_type": "number"
+                },
+                "project": {
+                  "_type": "string"
+                },
+                "branch": {
+                  "_type": "string"
+                },
+                "hash": {
+                  "_type": "string"
+                },
+                "pusher": {
+                  "_type": "string"
+                },
+                "gitRemote": {
+                  "_type": "string"
+                },
+                "status": {
+                  "_type": "number"
+                },
+                "createTime": {
+                  "_type": "number"
+                },
+                "updateTime": {
+                  "_type": "number"
+                }
               },
               "message": {
                 "_type": "string"
@@ -188,7 +310,82 @@
           "failed": [
             {
               "code": 1001409001,
-              "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+              "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
+              "data": null
+            }
+          ]
+        }
+      }
+    },
+    "createProject": {
+      "name": "createProject",
+      "desc": "创建构建项目",
+      "group": "",
+      "request": {
+        "method": "post",
+        "uri": "/project",
+        "query": {},
+        "params": {},
+        "body": {
+          "project": {
+            "_type": "string",
+            "_default": "",
+            "_desc": "项目名 ",
+            "_length": [
+              1,
+              64
+            ]
+          }
+        },
+        "headers": {
+          "password": {
+            "_type": "string",
+            "_default": "default",
+            "_desc": "密码 ",
+            "_length": [
+              1,
+              64
+            ]
+          }
+        }
+      },
+      "response": {
+        "body": {
+          "success": [
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 0
+              },
+              "data": {
+                "id": {
+                  "_type": "number"
+                },
+                "name": {
+                  "_type": "string"
+                },
+                "status": {
+                  "_type": "number"
+                },
+                "lastBuild": {
+                  "_type": "number"
+                },
+                "createTime": {
+                  "_type": "number"
+                },
+                "updateTime": {
+                  "_type": "number"
+                }
+              },
+              "message": {
+                "_type": "string"
+              }
+            }
+          ],
+          "failed": [
+            {
+              "code": 1001403001,
+              "message": "[FORBIDDEN]没有权限: ",
               "data": null
             }
           ]

@@ -1,23 +1,20 @@
 "use strict";
 const Connection = require('xiaolan-db').Connection('default').conn;
-const TableName = "event";
+const TableName = "project";
 
-class Event {
+class Project {
 
   constructor(data={}){
     this.id = (data.id||data.id)||0;
-    this.project = (data.project||data.project)||'';
-    this.branch = (data.branch||data.branch)||'';
-    this.hash = (data.hash||data.hash)||'';
-    this.pusher = (data.pusher||data.pusher)||'';
-    this.gitRemote = (data.gitRemote||data.git_remote)||'';
+    this.name = (data.name||data.project_name)||'';
     this.status = (data.status||data.status)||0;
+    this.lastBuild = (data.lastBuild||data.last_build)||0;
     this.createTime = (data.createTime||data.create_time)||0;
     this.updateTime = (data.updateTime||data.update_time)||0;
   }
 
   static fetchById(v){
-    let sql = 'select * from event where id=:v limit 1';
+    let sql = 'select * from project where id=:v limit 1';
     //@row
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{v:v}}, (e ,r)=>{
@@ -25,7 +22,7 @@ class Event {
           rejected(e);
         }else{
           if(r[0]){
-            resolved(new Event(r[0]));
+            resolved(new Project(r[0]));
           }else{
             resolved(null);
           }
@@ -35,7 +32,7 @@ class Event {
   }
 
   static fetchByStatus(status, page=1, pageSize=10){
-    let sql = 'select * from event where status=:status order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from project where status=:status order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{status: status}}, (e ,r)=>{
@@ -44,7 +41,25 @@ class Event {
         }else{
           let result = [];
           for(let k in r) {
-            result.push(new Event(r[k]));
+            result.push(new Project(r[k]));
+          }
+          resolved(result);
+        }
+      });
+    });
+  }
+
+  static fetchByLastBuild(lastBuild, page=1, pageSize=10){
+    let sql = 'select * from project where last_build=:lastBuild order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    //@list
+    return new Promise((resolved, rejected) => {
+      Connection.query({sql:sql, params:{lastBuild: lastBuild}}, (e ,r)=>{
+        if(e){
+          rejected(e);
+        }else{
+          let result = [];
+          for(let k in r) {
+            result.push(new Project(r[k]));
           }
           resolved(result);
         }
@@ -53,7 +68,7 @@ class Event {
   }
 
   static fetchByCreateTime(createTime, page=1, pageSize=10){
-    let sql = 'select * from event where create_time=:createTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from project where create_time=:createTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{createTime: createTime}}, (e ,r)=>{
@@ -62,7 +77,7 @@ class Event {
         }else{
           let result = [];
           for(let k in r) {
-            result.push(new Event(r[k]));
+            result.push(new Project(r[k]));
           }
           resolved(result);
         }
@@ -71,7 +86,7 @@ class Event {
   }
 
   static fetchByUpdateTime(updateTime, page=1, pageSize=10){
-    let sql = 'select * from event where update_time=:updateTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from project where update_time=:updateTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{updateTime: updateTime}}, (e ,r)=>{
@@ -80,7 +95,7 @@ class Event {
         }else{
           let result = [];
           for(let k in r) {
-            result.push(new Event(r[k]));
+            result.push(new Project(r[k]));
           }
           resolved(result);
         }
@@ -88,16 +103,16 @@ class Event {
     });
   }
 
-  static fetchByProjectBranchHash(project, branch, hash, page=1, pageSize=10){
-    let sql = 'select * from event where project=:project and branch=:branch and hash=:hash order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+  static fetchByName(name, page=1, pageSize=10){
+    let sql = 'select * from project where project_name=:name order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@row
     return new Promise((resolved, rejected) => {
-      Connection.query({sql:sql, params:{project: project, branch: branch, hash: hash}}, (e ,r)=>{
+      Connection.query({sql:sql, params:{name: name}}, (e ,r)=>{
         if(e){
           rejected(e);
         }else{
           if(r[0]){
-            resolved(new Event(r[0]));
+            resolved(new Project(r[0]));
           }else{
             resolved(null);
           }
@@ -107,8 +122,8 @@ class Event {
   }
 
   static fetchByAttr(data={}, page=1, pageSize=10){
-    let allowKey = ['id','status','create_time','update_time','project','branch','hash'];
-    let sql = 'select * from event where 1 ';
+    let allowKey = ['id','status','last_build','create_time','update_time','project_name'];
+    let sql = 'select * from project where 1 ';
     if(Object.keys(data).length===0){
       throw new Error('data param required');
     }
@@ -132,7 +147,7 @@ class Event {
         }else{
           let result = [];
           for(let k in r) {
-            result.push(new Event(r[k]));
+            result.push(new Project(r[k]));
           }
           resolved(result);
         }
@@ -152,7 +167,7 @@ class Event {
         }else{
           let result = [];
           for(let k in r) {
-            result.push(new Event(r[k]));
+            result.push(new Project(r[k]));
           }
           resolved(result);
         }
@@ -177,23 +192,14 @@ class Event {
   }
 
   validate(){
-    if(this.project !== null && !(typeof this.project==='string' && this.project.length>=0 && this.project.length<=255)){
-      throw new Error('attribute project(project) must be a string length in [0,255]');
-    }
-    if(this.branch !== null && !(typeof this.branch==='string' && this.branch.length>=0 && this.branch.length<=64)){
-      throw new Error('attribute branch(branch) must be a string length in [0,64]');
-    }
-    if(this.hash !== null && !(typeof this.hash==='string' && this.hash.length>=0 && this.hash.length<=64)){
-      throw new Error('attribute hash(hash) must be a string length in [0,64]');
-    }
-    if(this.pusher !== null && !(typeof this.pusher==='string' && this.pusher.length>=0 && this.pusher.length<=32)){
-      throw new Error('attribute pusher(pusher) must be a string length in [0,32]');
-    }
-    if(this.gitRemote !== null && !(typeof this.gitRemote==='string' && this.gitRemote.length>=0 && this.gitRemote.length<=255)){
-      throw new Error('attribute gitRemote(git_remote) must be a string length in [0,255]');
+    if(this.name !== null && !(typeof this.name==='string' && this.name.length>=0 && this.name.length<=64)){
+      throw new Error('attribute name(project_name) must be a string length in [0,64]');
     }
     if(this.status !== null && !(typeof this.status==='number' && this.status>=0 && this.status<=255)){
       throw new Error('attribute status(status) must be a number in [0,255]');
+    }
+    if(this.lastBuild !== null && !(typeof this.lastBuild==='number' && this.lastBuild>=0 && this.lastBuild<=18014398509481982)){
+      throw new Error('attribute lastBuild(last_build) must be a number in [0,18014398509481982]');
     }
     if(this.createTime !== null && !(typeof this.createTime==='number' && this.createTime>=0 && this.createTime<=18014398509481982)){
       throw new Error('attribute createTime(create_time) must be a number in [0,18014398509481982]');
@@ -263,34 +269,28 @@ class Event {
 
   static create(data){
     //@this
-    return new Event(data);
+    return new Project(data);
   }
 
 }
 
 const FieldMap = {
   id: 'id',
-  project: 'project',
-  branch: 'branch',
-  hash: 'hash',
-  pusher: 'pusher',
-  git_remote: 'gitRemote',
+  project_name: 'name',
   status: 'status',
+  last_build: 'lastBuild',
   create_time: 'createTime',
   update_time: 'updateTime',
 };
 
 const KeyMap = {
   id: 'id',
-  project: 'project',
-  branch: 'branch',
-  hash: 'hash',
-  pusher: 'pusher',
-  gitRemote: 'git_remote',
+  name: 'project_name',
   status: 'status',
+  lastBuild: 'last_build',
   createTime: 'create_time',
   updateTime: 'update_time',
 };
 
 
-module.exports = Event;
+module.exports = Project;

@@ -13,5 +13,7 @@ let Error = {
   UNFINISHED_TASK: 409,
   //管理员不高兴
   UNHAPPY_ERROR: 500,
+  //没有权限
+  FORBIDDEN:403,
 };
 

@@ -25,4 +25,10 @@ module.exports = [
     code: (process.env.APPID || 1001)*1e6+500003,
     message: '管理员不高兴',
   },
+  {
+    name: 'FORBIDDEN',
+    httpStatus: 403,
+    code: (process.env.APPID || 1001)*1e6+403001,
+    message: '没有权限',
+  },
 ];

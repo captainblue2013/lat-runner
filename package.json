@@ -13,6 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "shelljs": "^0.7.8",
-    "xiaolan": "^1.5.20"
+    "xiaolan": "^1.5.21"
   }
 }

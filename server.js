@@ -12,11 +12,16 @@ const Xiaolan = require('xiaolan');
 //启动监听服务
 const app = new Xiaolan(config);
 
-app.createServer();
 
 
-const child_process = require('child_process');
-child_process.exec('node ./cmd/job.js 1',null,(err,stdo,stde)=>{
-console.log(stdo);
+require('./libs/loadProject')().then((v)=>{
+    console.log(process.projectMap);
+    app.createServer();
+}).catch((e)=>{
+    console.log('Load Project Error:'+e);process.exit(0);
 });
-console.log('waiting');
+// const child_process = require('child_process');
+// child_process.exec('node ./cmd/job.js 1',null,(err,stdo,stde)=>{
+// console.log(stdo);
+// });
+// console.log('waiting');

@@ -24,7 +24,8 @@ module.exports = async (Event) => {
     let model = EventModel.create(Event);
     let date = new Date();
     model.updateTime = model.createTime = Number.parseInt(date.getTime()/1000);
-    return model.save(true);
+    let saved = await model.save(true);
+    return model;
   }
 
 };
