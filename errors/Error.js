@@ -15,5 +15,7 @@ let Error = {
   UNHAPPY_ERROR: 500,
   //没有权限
   FORBIDDEN:403,
+  //不被允许的项目
+  NOT_ALLOW:403,
 };
 

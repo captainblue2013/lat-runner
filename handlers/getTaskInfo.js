@@ -11,5 +11,4 @@ module.exports = async (Params)=>{
      let model = EventModel.fetchById(Params.eventID);
     
      return model;
-    //return 1;
 };

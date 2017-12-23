@@ -27,6 +27,11 @@
       "message": "[FORBIDDEN]没有权限: ",
       "data": null
     },
+    "error.NOT_ALLOW": {
+      "code": 1001403002,
+      "message": "[NOT_ALLOW]不被允许的项目: ",
+      "data": null
+    },
     "error.INTERNAL_ERROR": {
       "code": -1,
       "message": "[INTERNAL_ERROR]Internal Error: ",
@@ -308,6 +313,11 @@
             }
           ],
           "failed": [
+            {
+              "code": 1001403002,
+              "message": "[NOT_ALLOW]不被允许的项目: ",
+              "data": null
+            },
             {
               "code": 1001409001,
               "message": "[UNFINISHED_TASK]还有未完成发布任务: ",

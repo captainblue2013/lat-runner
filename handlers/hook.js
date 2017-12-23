@@ -15,6 +15,11 @@ const Event = {
 };
 
 module.exports = async (Event) => {
+  if((process.projectMap[Event.project] !== undefined)&&(process.projectMap[Event.project].status==1)){
+    //pass
+  }else{
+    return error.NOT_ALLOW;
+  }
   Event.branch = Event.branch.split('/').pop();
   let exists = await EventModel.fetchByProjectBranchHash(Event.project, Event.branch, Event.hash);
   
