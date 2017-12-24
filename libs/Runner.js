@@ -63,12 +63,9 @@ class Runner {
       return;
     }
     if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
-      //状态设置成失败
-      event.status = 3;
-      event.remark = 'Dockerfile Not Found';
-      await event.update(true);
-      throw new Error('Dockerfile Not Found');
-      return;
+      //默认的Dockerfile
+      const dockerfile = require('../libs/dockerfile');
+      fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile(event.project.split('/').pop()))
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
     shell.exec(`docker rmi -f ${imageName}`);
@@ -81,7 +78,7 @@ class Runner {
       return;
     }
 
-    renderYml(event.project.replace(/\/|_/g,'-'), imageName);
+    renderYml(event.project.replace(/\/|_/g,'-'), imageName, event.project.split('/').pop());
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
       event.status = 3;
@@ -98,7 +95,7 @@ class Runner {
       throw new Error('Create rancher-compose.yml Failed');
       return;
     }
-    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace('/','-')}`).code !== 0) {
+    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g,'-')}`).code !== 0) {
       //状态设置成失败
       event.status = 3;
       event.remark = 'rancher up failed';
