@@ -12,8 +12,6 @@ const Xiaolan = require('xiaolan');
 //启动监听服务
 const app = new Xiaolan(config);
 
-
-
 require('./libs/loadProject')().then((v)=>{
     console.log(process.projectMap);
     app.createServer();
