@@ -100,6 +100,9 @@
                 "status": {
                   "_type": "number"
                 },
+                "remark": {
+                  "_type": "string"
+                },
                 "createTime": {
                   "_type": "number"
                 },
@@ -299,6 +302,9 @@
                 },
                 "status": {
                   "_type": "number"
+                },
+                "remark": {
+                  "_type": "string"
                 },
                 "createTime": {
                   "_type": "number"

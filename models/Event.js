@@ -9,6 +9,7 @@ module.exports = new Table('event', {
   pusher:Field.name('pusher').varchar(32).comment(),
   gitRemote:Field.name('git_remote').varchar(255).comment('git remote ssh'),
   status:Field.name('status').tinyint(true).index().comment('0初始化,1处理中,2成功,3失败'),
+  remark:Field.name('remark').varchar(255).allowNull().comment('处理结果原语'),
   createTime:Field.name('create_time').bigint(true).index(),
   updateTime:Field.name('update_time').bigint(true).index()
 });

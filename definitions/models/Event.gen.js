@@ -12,6 +12,7 @@ class Event {
     this.pusher = (data.pusher||data.pusher)||'';
     this.gitRemote = (data.gitRemote||data.git_remote)||'';
     this.status = (data.status||data.status)||0;
+    this.remark = (data.remark||data.remark)||'';
     this.createTime = (data.createTime||data.create_time)||0;
     this.updateTime = (data.updateTime||data.update_time)||0;
   }
@@ -195,6 +196,9 @@ class Event {
     if(this.status !== null && !(typeof this.status==='number' && this.status>=0 && this.status<=255)){
       throw new Error('attribute status(status) must be a number in [0,255]');
     }
+    if(this.remark !== null && !(typeof this.remark==='string' && this.remark.length>=0 && this.remark.length<=255)){
+      throw new Error('attribute remark(remark) must be a string length in [0,255]');
+    }
     if(this.createTime !== null && !(typeof this.createTime==='number' && this.createTime>=0 && this.createTime<=18014398509481982)){
       throw new Error('attribute createTime(create_time) must be a number in [0,18014398509481982]');
     }
@@ -276,6 +280,7 @@ const FieldMap = {
   pusher: 'pusher',
   git_remote: 'gitRemote',
   status: 'status',
+  remark: 'remark',
   create_time: 'createTime',
   update_time: 'updateTime',
 };
@@ -288,6 +293,7 @@ const KeyMap = {
   pusher: 'pusher',
   gitRemote: 'git_remote',
   status: 'status',
+  remark: 'remark',
   createTime: 'create_time',
   updateTime: 'update_time',
 };
