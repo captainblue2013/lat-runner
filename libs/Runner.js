@@ -65,7 +65,7 @@ class Runner {
     if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
       //默认的Dockerfile
       const dockerfile = require('../libs/dockerfile');
-      fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile(event.project.split('/').pop()))
+      fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.frontend(event.project.split('/').pop()))
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
     shell.exec(`docker rmi -f ${imageName}`);
