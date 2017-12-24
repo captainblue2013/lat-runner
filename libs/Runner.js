@@ -81,7 +81,7 @@ class Runner {
       return;
     }
 
-    renderYml(event.project.replace('/','-'), imageName);
+    renderYml(event.project.replace(/\/|_/g,'-'), imageName);
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
       event.status = 3;

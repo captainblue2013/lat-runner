@@ -15,7 +15,7 @@ const app = new Xiaolan(config);
 
 
 require('./libs/loadProject')().then((v)=>{
-    //console.log(process.projectMap);
+    console.log(process.projectMap);
     app.createServer();
 }).catch((e)=>{
     console.log('Load Project Error:'+e);process.exit(0);
