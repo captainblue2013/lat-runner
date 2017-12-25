@@ -34,6 +34,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Git Clone Failed:' + `git clone https://github.com/${event.project}.git`;
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Git Clone Failed:' + `git clone https://github.com/${event.project}.git`);
       return;
@@ -42,6 +43,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Git Checkout Failed:' + event.branch;
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Git Checkout Failed:' + event.branch);
       return;
@@ -50,6 +52,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Git Checkout Failed:' + event.hash;
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Git Checkout Failed:' + event.hash);
       return;
@@ -58,6 +61,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'npm run test Failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('npm run test Failed');
       return;
@@ -73,6 +77,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Build image failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Build image failed');
       return;
@@ -83,6 +88,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Create docker-compose.yml Failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Create docker-compose.yml Failed');
       return;
@@ -91,6 +97,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'Create rancher-compose.yml Failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('Create rancher-compose.yml Failed');
       return;
@@ -99,6 +106,7 @@ class Runner {
       //状态设置成失败
       event.status = 3;
       event.remark = 'rancher up failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('rancher up failed');
       return;
