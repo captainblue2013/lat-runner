@@ -112,6 +112,7 @@ class Runner {
       return;
     }
     event.status = 2;
+    event.updateTime = Number.parseInt(Date.now()/1000);
     await event.update(true);
     return process.cwd()
 
