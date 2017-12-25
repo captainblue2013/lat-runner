@@ -9,12 +9,19 @@ if (Number.isNaN(eventID * 1)) {
     console.log('Invalid EventID');
     process.exit(0);
 }
-let runner = new Runner(eventID);
-runner.run().then((v) => { 
-    console.log(v);
-    process.exit(0); 
-}).catch((v) => { 
-    console.log(v);
-    process.exit(0); 
+
+require('../libs/loadProject')().then((v) => {
+
+    let runner = new Runner(eventID);
+    runner.run().then((v) => {
+        console.log(v);
+        process.exit(0);
+    }).catch((v) => {
+        console.log(v);
+        process.exit(0);
+    });
+}).catch((e) => {
+    console.log('Load Project Error:' + e); process.exit(0);
 });
+
 

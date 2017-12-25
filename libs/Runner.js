@@ -3,7 +3,7 @@ const fs = require('fs');
 const shell = require('shelljs');
 
 const renderYml = require('../libs/renderYml');
-
+const entranceYml = require('../libs/entranceYml');
 const EventModel = require('../definitions/models/Event.gen');
 
 class Runner {
@@ -109,6 +109,21 @@ class Runner {
       event.updateTime = Number.parseInt(Date.now()/1000);
       await event.update(true);
       throw new Error('rancher up failed');
+      return;
+    }
+    if(!fs.existsSync(process.cwd()+'/entrance')){
+      fs.mkdirSync(process.cwd()+'/entrance');
+    }
+    process.chdir(process.cwd()+'/entrance');
+    entranceYml();
+
+    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
+      //状态设置成失败
+      event.status = 3;
+      event.remark = 'rancher up entrance failed';
+      event.updateTime = Number.parseInt(Date.now()/1000);
+      await event.update(true);
+      throw new Error('rancher up entrance failed');
       return;
     }
     event.status = 2;
