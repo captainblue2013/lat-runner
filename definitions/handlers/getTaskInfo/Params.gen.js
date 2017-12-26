@@ -4,22 +4,34 @@
 
 class Params {
   constructor(options={}){
-    this.eventID = options.eventID;
+    this.project = options.project;
+    this.branch = options.branch || '';
+    this.hash = options.hash || '';
     this.validate();
   }
 
   static fromRequest(req){
     let options={};
-    if(!this.pick(req, 'query.eventID')){
-      throw new Error("Requirement : [eventID]");
+    if(!this.pick(req, 'query.project')){
+      throw new Error("Requirement : [project]");
     }
-    options.eventID = this.pick(req, 'query.eventID', 'number', 0);
+    options.project = this.pick(req, 'query.project', 'string', '');
+    options.branch = this.pick(req, 'query.branch', 'string', '');
+    options.hash = this.pick(req, 'query.hash', 'string', '');
     return new Params(options);
   }
 
   validate(){
-    if(!(Number.isInteger(this.eventID) && (this.eventID>=0) && (this.eventID<=100))){
-      throw new Error('type validate failed: [eventID]: Number must in range 0 to 100');
+    if(!((typeof this.project === 'string') && (this.project.length>=1) && (this.project.length<=64))){
+      throw new Error('type validate failed: [project]: String length must between 1 to 64');
+    }
+
+    if(!((typeof this.branch === 'string') && (this.branch.length>=0) && (this.branch.length<=64))){
+      throw new Error('type validate failed: [branch]: String length must between 0 to 64');
+    }
+
+    if(!((typeof this.hash === 'string') && (this.hash.length>=0) && (this.hash.length<=64))){
+      throw new Error('type validate failed: [hash]: String length must between 0 to 64');
     }
 
   }

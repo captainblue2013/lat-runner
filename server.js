@@ -13,10 +13,6 @@ const Xiaolan = require('xiaolan');
 const app = new Xiaolan(config);
 
 require('./libs/loadProject')().then((v)=>{
-    
-    require('child_process').exec(`node ${process.cwd()}/cmd/job.js 12`, null, (err, stdo, stde) => {
-        console.log(stdo);
-      });
     app.createServer();
 }).catch((e)=>{
     console.log('Load Project Error:'+e);process.exit(0);

@@ -55,15 +55,33 @@
       "group": "",
       "request": {
         "method": "get",
-        "uri": "/status",
+        "path": "/status",
         "query": {
-          "eventID": {
-            "_type": "number",
-            "_default": 0,
+          "project": {
+            "_type": "string",
+            "_default": "",
             "_desc": "key ",
-            "_range": [
+            "_length": [
+              1,
+              64
+            ]
+          },
+          "branch": {
+            "_type": "string",
+            "_default": "",
+            "_desc": "key ",
+            "_length": [
               0,
-              100
+              64
+            ]
+          },
+          "hash": {
+            "_type": "string",
+            "_default": "",
+            "_desc": "key ",
+            "_length": [
+              0,
+              64
             ]
           }
         },
@@ -78,38 +96,40 @@
                 "_type": "number",
                 "_assert": 0
               },
-              "data": {
-                "id": {
-                  "_type": "number"
-                },
-                "project": {
-                  "_type": "string"
-                },
-                "branch": {
-                  "_type": "string"
-                },
-                "hash": {
-                  "_type": "string"
-                },
-                "pusher": {
-                  "_type": "string"
-                },
-                "gitRemote": {
-                  "_type": "string"
-                },
-                "status": {
-                  "_type": "number"
-                },
-                "remark": {
-                  "_type": "string"
-                },
-                "createTime": {
-                  "_type": "number"
-                },
-                "updateTime": {
-                  "_type": "number"
+              "data": [
+                {
+                  "id": {
+                    "_type": "number"
+                  },
+                  "project": {
+                    "_type": "string"
+                  },
+                  "branch": {
+                    "_type": "string"
+                  },
+                  "hash": {
+                    "_type": "string"
+                  },
+                  "pusher": {
+                    "_type": "string"
+                  },
+                  "gitRemote": {
+                    "_type": "string"
+                  },
+                  "status": {
+                    "_type": "number"
+                  },
+                  "remark": {
+                    "_type": "string"
+                  },
+                  "createTime": {
+                    "_type": "number"
+                  },
+                  "updateTime": {
+                    "_type": "number"
+                  }
                 }
-              },
+              ],
               "message": {
                 "_type": "string"
               }
@@ -125,7 +145,7 @@
       "group": "",
       "request": {
         "method": "get",
-        "uri": "/project",
+        "path": "/project",
         "query": {
           "name": {
             "_type": "string",
@@ -216,7 +236,7 @@
       "group": "",
       "request": {
         "method": "post",
-        "uri": "/hook",
+        "path": "/hook",
         "query": {},
         "params": {},
         "body": {
@@ -339,7 +359,7 @@
       "group": "",
       "request": {
         "method": "post",
-        "uri": "/project",
+        "path": "/project",
         "query": {},
         "params": {},
         "body": {

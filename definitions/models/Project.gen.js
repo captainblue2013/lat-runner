@@ -136,7 +136,7 @@ class Project {
       }else{
         throw new Error('Not Allow Fetching By [ "'+k+'" ]');
       }
-      sql += 'and '+field+'=:'+k+'';
+      sql += ' and '+field+'=:'+k+'';
     }
     sql += ' order by id desc limit '+((page-1)*pageSize)+','+pageSize;
     //@list
