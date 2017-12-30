@@ -12,7 +12,7 @@ CMD ["nginx","-g","daemon off;"]
 COPY . /app
 WORKDIR /app
 RUN npm install --registry=https://registry.npm.taobao.org
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
     `;
-  }
+  },
 };
