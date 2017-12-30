@@ -1,10 +1,13 @@
+
 const path = require('path');
 const fs = require('fs');
 const shell = require('shelljs');
+const EOL = require('os').EOL;
 
 const renderYml = require('../libs/renderYml');
 const entranceYml = require('../libs/entranceYml');
 const EventModel = require('../definitions/models/Event.gen');
+const dockerfile = require('../libs/dockerfile');
 
 class Runner {
   constructor(eventID) {
@@ -28,87 +31,92 @@ class Runner {
       this.makeDir(`${event.project}/${event.branch}`);
     }
     process.chdir(`${this.buildPath}/${event.project}/${event.branch}`);
+
+
     shell.exec(`rm -fr *`);
     shell.exec(`rm -fr .*`);
+
+    //克隆git仓库
     if (shell.exec(`git clone https://github.com/${event.project}.git .`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Git Clone Failed:' + `git clone https://github.com/${event.project}.git`;
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Git Clone Failed:' + `git clone https://github.com/${event.project}.git`);
+      await this.error(event, 'Git Clone Failed:' + `git clone https://github.com/${event.project}.git`);
       return;
     }
+
+    //切糕指定分支
     if (shell.exec(`git checkout ${event.branch}`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Git Checkout Failed:' + event.branch;
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Git Checkout Failed:' + event.branch);
+      await this.error(event, 'Git Checkout Failed:' + event.branch);
       return;
     }
+
+    //切糕指定提交
     if (shell.exec(`git checkout ${event.hash}`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Git Checkout Failed:' + event.hash;
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Git Checkout Failed:' + event.hash);
+      await this.error(event, 'Git Checkout Failed:' + event.hash);
       return;
     }
-    if (shell.exec(`npm run test`).code !== 0) {
-      //状态设置成失败
-      event.status = 3;
-      event.remark = 'npm run test Failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('npm run test Failed');
-      return;
+
+    //判断项目类型
+    if(fs.existsSync(process.cwd() + '/index.html') || fs.existsSync(process.cwd() + '/index.htm')){
+      //理解为静态项目
+      if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.frontend(event.project.split('/').pop()))
+      }
+    }else if(fs.existsSync(process.cwd() + '/package.json')){
+      //理解为node项目
+      if(shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0){
+        //状态设置成失败
+        await this.error('npm install Failed');
+        return;
+      }
+      //执行测试脚本
+      if (shell.exec(`npm run test`).code !== 0) {
+        //状态设置成失败
+        await this.error(event,'npm run test Failed');
+        return;
+      }
+      if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.node(event.project.split('/').pop()))
+      }
+      if (!fs.existsSync(process.cwd() + '/.dockerignore')) {
+        
+        fs.writeFileSync(process.cwd() + '/.dockerignore',`node_modules${EOL}.git`)
+      }
+    }else{
+      //理解为其他项目
     }
+   
     if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
-      //默认的Dockerfile
-      const dockerfile = require('../libs/dockerfile');
-      fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.frontend(event.project.split('/').pop()))
+      //状态设置成失败
+      await this.error(event,'Dockerfile Not Found');
+      return;
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
+    console.log(`About building: ${imageName}`);
     shell.exec(`docker rmi -f ${imageName}`);
     if (shell.exec(`docker build -t ${imageName} .`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Build image failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Build image failed');
+      await this.error('Build image failed');
       return;
     }
 
     renderYml(event.project.replace(/\/|_/g,'-'), imageName, event.project.split('/').pop());
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Create docker-compose.yml Failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Create docker-compose.yml Failed');
+      await this.error(event,'Create docker-compose.yml Failed');
       return;
     }
     if (!fs.existsSync(process.cwd() + '/rancher-compose.yml')) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'Create rancher-compose.yml Failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('Create rancher-compose.yml Failed');
+      await this.error('Create rancher-compose.yml Failed');
       return;
     }
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g,'-')}`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'rancher up failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('rancher up failed');
+      await this.error('rancher up failed');
       return;
     }
     if(!fs.existsSync(process.cwd()+'/entrance')){
@@ -119,11 +127,7 @@ class Runner {
 
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
       //状态设置成失败
-      event.status = 3;
-      event.remark = 'rancher up entrance failed';
-      event.updateTime = Number.parseInt(Date.now()/1000);
-      await event.update(true);
-      throw new Error('rancher up entrance failed');
+      await this.error('rancher up entrance failed');
       return;
     }
     event.status = 2;
@@ -142,6 +146,15 @@ class Runner {
       }
       current = `${current}/${arr[k]}`;
     }
+  }
+
+  async error(event, msg){
+    event.status = 3;
+    event.remark = msg;
+    event.updateTime = Number.parseInt(Date.now()/1000);
+    await event.update(true);
+    throw new Error(msg);
+    return false;
   }
 }
 
