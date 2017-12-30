@@ -58,15 +58,29 @@ class Runner {
     }
 
     //判断项目类型
-    if(fs.existsSync(process.cwd() + '/index.html') || fs.existsSync(process.cwd() + '/index.htm')){
+    if (fs.existsSync(`${process.cwd()}/index.html`) || fs.existsSync(`${process.cwd()}/index.htm`)) {
       //理解为静态项目
-      if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
         //默认的静态项目 Dockerfile
-        fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.frontend(event.project.split('/').pop()))
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    }else if(fs.existsSync(process.cwd() + '/package.json')){
+    } else if (fs.existsSync(`${process.cwd()}/package.json`)) {
       //理解为node项目
-      if(shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0){
+      //检查script
+      let pkg = require(`${process.cwd()}/package.json`);
+      if (!pkg.scripts) {
+        await this.error(event, 'package.json 缺少 scripts');
+        return;
+      }
+      if (!pkg.scripts.test) {
+        await this.error(event, 'package.json 缺少 npm run test 命令');
+        return;
+      }
+      if (!pkg.scripts.start) {
+        await this.error(event, 'package.json 缺少 npm start 命令');
+        return;
+      }
+      if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
         //状态设置成失败
         await this.error('npm install Failed');
         return;
@@ -74,24 +88,24 @@ class Runner {
       //执行测试脚本
       if (shell.exec(`npm run test`).code !== 0) {
         //状态设置成失败
-        await this.error(event,'npm run test Failed');
+        await this.error(event, 'npm run test Failed');
         return;
       }
-      if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
         //默认的静态项目 Dockerfile
-        fs.writeFileSync(process.cwd() + '/Dockerfile',dockerfile.node(event.project.split('/').pop()))
+        fs.writeFileSync(`${process.cwd()}/Dockerfile`, dockerfile.node(event.project.split('/').pop()))
       }
-      if (!fs.existsSync(process.cwd() + '/.dockerignore')) {
-        
-        fs.writeFileSync(process.cwd() + '/.dockerignore',`node_modules${EOL}.git`)
+      if (!fs.existsSync(`${process.cwd()}/.dockerignore`)) {
+
+        fs.writeFileSync(`${process.cwd()}/.dockerignore`, `node_modules${EOL}.git`)
       }
-    }else{
+    } else {
       //理解为其他项目
     }
-   
+
     if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
       //状态设置成失败
-      await this.error(event,'Dockerfile Not Found');
+      await this.error(event, 'Dockerfile Not Found');
       return;
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
@@ -103,10 +117,10 @@ class Runner {
       return;
     }
 
-    renderYml(event.project.replace(/\/|_/g,'-'), imageName, event.project.split('/').pop());
+    renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop());
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
-      await this.error(event,'Create docker-compose.yml Failed');
+      await this.error(event, 'Create docker-compose.yml Failed');
       return;
     }
     if (!fs.existsSync(process.cwd() + '/rancher-compose.yml')) {
@@ -114,15 +128,15 @@ class Runner {
       await this.error('Create rancher-compose.yml Failed');
       return;
     }
-    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g,'-')}`).code !== 0) {
+    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`).code !== 0) {
       //状态设置成失败
       await this.error('rancher up failed');
       return;
     }
-    if(!fs.existsSync(process.cwd()+'/entrance')){
-      fs.mkdirSync(process.cwd()+'/entrance');
+    if (!fs.existsSync(process.cwd() + '/entrance')) {
+      fs.mkdirSync(process.cwd() + '/entrance');
     }
-    process.chdir(process.cwd()+'/entrance');
+    process.chdir(process.cwd() + '/entrance');
     entranceYml();
 
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
@@ -131,7 +145,7 @@ class Runner {
       return;
     }
     event.status = 2;
-    event.updateTime = Number.parseInt(Date.now()/1000);
+    event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
     return process.cwd()
 
@@ -148,10 +162,10 @@ class Runner {
     }
   }
 
-  async error(event, msg){
+  async error(event, msg) {
     event.status = 3;
     event.remark = msg;
-    event.updateTime = Number.parseInt(Date.now()/1000);
+    event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
     throw new Error(msg);
     return false;
