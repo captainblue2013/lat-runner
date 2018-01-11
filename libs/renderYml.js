@@ -4,6 +4,7 @@ function dockerCompose(service,image){
     let tpl = `version: '2'
 services:
   ${service}:
+    mem_limit: 104857600
     image: ${image}
     stdin_open: true
     tty: true
