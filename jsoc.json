@@ -1,35 +1,9 @@
 {
   "host": "",
-  "projectRoot": "/Users/lanhao/test/lat-runner",
-  "definitions": {
+  "errors": {
     "error.COMMON_ERROR": {
       "code": 1001500001,
       "message": "[COMMON_ERROR]通用错误: ",
-      "data": null
-    },
-    "error.RANDOM_ERROR": {
-      "code": 1001500002,
-      "message": "[RANDOM_ERROR]随机错误: ",
-      "data": null
-    },
-    "error.UNFINISHED_TASK": {
-      "code": 1001409001,
-      "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
-      "data": null
-    },
-    "error.UNHAPPY_ERROR": {
-      "code": 1001500003,
-      "message": "[UNHAPPY_ERROR]管理员不高兴: ",
-      "data": null
-    },
-    "error.FORBIDDEN": {
-      "code": 1001403001,
-      "message": "[FORBIDDEN]没有权限: ",
-      "data": null
-    },
-    "error.NOT_ALLOW": {
-      "code": 1001403002,
-      "message": "[NOT_ALLOW]不被允许的项目: ",
       "data": null
     },
     "error.INTERNAL_ERROR": {
@@ -340,13 +314,13 @@
           ],
           "failed": [
             {
-              "code": 1001403002,
-              "message": "[NOT_ALLOW]不被允许的项目: ",
+              "code": -1,
+              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
               "data": null
             },
             {
-              "code": 1001409001,
-              "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
+              "code": -1,
+              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
               "data": null
             }
           ]
@@ -420,8 +394,8 @@
           ],
           "failed": [
             {
-              "code": 1001403001,
-              "message": "[FORBIDDEN]没有权限: ",
+              "code": -1,
+              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
               "data": null
             }
           ]

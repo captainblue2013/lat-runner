@@ -18,7 +18,7 @@ class Event {
   }
 
   static fetchById(v){
-    let sql = 'select * from event where id=:v limit 1';
+    let sql = 'select * from `event` where `id`=:v limit 1';
     //@row
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{v:v}}, (e ,r)=>{
@@ -36,7 +36,7 @@ class Event {
   }
 
   static fetchByStatus(status, page=1, pageSize=10){
-    let sql = 'select * from event where status=:status order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from `event` where `status`=:status order by `id` desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{status: status}}, (e ,r)=>{
@@ -54,7 +54,7 @@ class Event {
   }
 
   static fetchByCreateTime(createTime, page=1, pageSize=10){
-    let sql = 'select * from event where create_time=:createTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from `event` where `create_time`=:createTime order by `id` desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{createTime: createTime}}, (e ,r)=>{
@@ -72,7 +72,7 @@ class Event {
   }
 
   static fetchByUpdateTime(updateTime, page=1, pageSize=10){
-    let sql = 'select * from event where update_time=:updateTime order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from `event` where `update_time`=:updateTime order by `id` desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@list
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{updateTime: updateTime}}, (e ,r)=>{
@@ -90,7 +90,7 @@ class Event {
   }
 
   static fetchByProjectBranchHash(project, branch, hash, page=1, pageSize=10){
-    let sql = 'select * from event where project=:project and branch=:branch and hash=:hash order by id desc limit '+((page-1)*pageSize)+','+pageSize+'';
+    let sql = 'select * from `event` where `project`=:project and `branch`=:branch and `hash`=:hash order by `id` desc limit '+((page-1)*pageSize)+','+pageSize+'';
     //@row
     return new Promise((resolved, rejected) => {
       Connection.query({sql:sql, params:{project: project, branch: branch, hash: hash}}, (e ,r)=>{
@@ -109,7 +109,7 @@ class Event {
 
   static fetchByAttr(data={}, page=1, pageSize=10){
     let allowKey = ['id','status','create_time','update_time','project','branch','hash'];
-    let sql = 'select * from event where 1 ';
+    let sql = 'select * from `event` where 1 ';
     if(Object.keys(data).length===0){
       throw new Error('data param required');
     }
@@ -122,9 +122,9 @@ class Event {
       }else{
         throw new Error('Not Allow Fetching By [ "'+k+'" ]');
       }
-      sql += ' and '+field+'=:'+k+'';
+      sql += ' and `'+field+'`=:'+k+'';
     }
-    sql += ' order by id desc limit '+((page-1)*pageSize)+','+pageSize;
+    sql += ' order by `id` desc limit '+((page-1)*pageSize)+','+pageSize;
     //@list
     return new Promise((resolved, rejected)=>{
       Connection.query({sql:sql,params:data}, (e, r)=>{
@@ -161,6 +161,37 @@ class Event {
     });
   }
     
+  static table(){
+    return TableName;
+  }
+  
+  static count(expression,where){
+    let sql = 'select count('+expression+') from `event` ';
+    let conditions = [];
+    let params = {};
+    for(let k in where){
+      conditions.push(' `'+k+'`=:'+k);
+      params[k] = where[k];
+    }
+    if(conditions.length){
+      sql += 'where '+conditions.join(' and ');
+    }
+    //@row
+    return new Promise((resolved,rejected)=>{
+      Connection.query({sql:sql,params:params}, (e,r)=>{
+        if(e){
+          rejected(e);
+        }else{
+          if(r[0]){
+            resolved(r[0]['count('+expression+')']);
+          }else{
+            resolved(null);
+          }
+        }
+      });
+    });
+  }
+  
   data(){
     let obj = {};
     for(let k in FieldMap){
@@ -218,20 +249,24 @@ class Event {
     //@true
     return new Promise((resolved, rejected) => {
       let data = this.data();
-      let sql = `insert into ${TableName} set `;
+      data.createTime = data.createTime||Number.parseInt(Date.now()/1000);
+      data.updateTime = data.updateTime||Number.parseInt(Date.now()/1000);
+      let sql = `insert into \`${TableName}\` set `;
       let fields = [];
       for(let k in data){
         if(k==='id' || data[k]===null){
           continue;
         }
-        fields.push(`${KeyMap[k]}=:${k}`);
+        fields.push(`\`${KeyMap[k]}\`=:${k}`);
       }
       sql += fields.join(',');
-      Connection.query({sql: sql,params:this.data()},(e, r) => {
+      Connection.query({sql: sql,params:data},(e, r) => {
         if(e) {
           rejected(e);
         }else{
           this.id = r.insertId;
+          this.createTime = data.createTime;
+          this.updateTime = data.updateTime;
           resolved(true);
         }
       });
@@ -244,17 +279,18 @@ class Event {
     }
     //@true
     return new Promise((resolved, rejected) => {
-      let sql = `update ${TableName} set `;
+      let sql = `update \`${TableName}\` set `;
       let data = this.data();
+      data.updateTime = data.updateTime||Number.parseInt(Date.now()/1000);
       let fields = [];
       for(let k in data){
         if(k==='id' || data[k]===null){
           continue;
         }
-        fields.push(`${KeyMap[k]}=:${k}`);
+        fields.push(`\`${KeyMap[k]}\`=:${k}`);
       }
       sql += fields.join(',');
-      sql += ` where id=:id`;
+      sql += ` where \`id\`=:id`;
       Connection.query({sql: sql,params:data},(e, r) => {
         if(e) {
           rejected(e);

@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenvr": "^0.1.12",
     "shelljs": "^0.7.8",
-    "xiaolan": "^1.5.24"
+    "xiaolan": "^1.6.0"
   }
 }

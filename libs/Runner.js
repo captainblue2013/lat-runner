@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const shell = require('shelljs');
 const EOL = require('os').EOL;
-
+const dotenvr = require('dotenvr');
 const renderYml = require('../libs/renderYml');
 const entranceYml = require('../libs/entranceYml');
 const EventModel = require('../definitions/models/Event.gen');
@@ -103,7 +103,7 @@ class Runner {
       //理解为其他项目
     }
 
-    if (!fs.existsSync(process.cwd() + '/Dockerfile')) {
+    if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
       //状态设置成失败
       await this.error(event, 'Dockerfile Not Found');
       return;
@@ -116,8 +116,9 @@ class Runner {
       await this.error('Build image failed');
       return;
     }
-
-    renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop());
+    const envData = require('dotenvr').load(`${process.cwd()}/.env.example`);
+    
+    renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(),envData);
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
       await this.error(event, 'Create docker-compose.yml Failed');
@@ -130,7 +131,7 @@ class Runner {
     }
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`).code !== 0) {
       //状态设置成失败
-      await this.error('rancher up failed');
+      await this.error(event,'rancher up failed');
       return;
     }
     if (!fs.existsSync(process.cwd() + '/entrance')) {
@@ -141,7 +142,7 @@ class Runner {
 
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
       //状态设置成失败
-      await this.error('rancher up entrance failed');
+      await this.error(event,'rancher up entrance failed');
       return;
     }
     event.status = 2;
