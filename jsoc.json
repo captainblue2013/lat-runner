@@ -153,6 +153,9 @@
                   "status": {
                     "_type": "number"
                   },
+                  "https": {
+                    "_type": "number"
+                  },
                   "lastBuild": {
                     "_type": "number"
                   },
@@ -182,6 +185,9 @@
                     "_type": "string"
                   },
                   "status": {
+                    "_type": "number"
+                  },
+                  "https": {
                     "_type": "number"
                   },
                   "lastBuild": {
@@ -375,6 +381,9 @@
                   "_type": "string"
                 },
                 "status": {
+                  "_type": "number"
+                },
+                "https": {
                   "_type": "number"
                 },
                 "lastBuild": {

@@ -8,6 +8,7 @@ class Project {
     this.id = (data.id||data.id)||0;
     this.name = (data.name||data.project_name)||'';
     this.status = (data.status||data.status)||0;
+    this.https = (data.https||data.https)||0;
     this.lastBuild = (data.lastBuild||data.last_build)||0;
     this.createTime = (data.createTime||data.create_time)||0;
     this.updateTime = (data.updateTime||data.update_time)||0;
@@ -229,6 +230,9 @@ class Project {
     if(this.status !== null && !(typeof this.status==='number' && this.status>=0 && this.status<=255)){
       throw new Error('attribute status(status) must be a number in [0,255]');
     }
+    if(this.https !== null && !(typeof this.https==='number' && this.https>=0 && this.https<=255)){
+      throw new Error('attribute https(https) must be a number in [0,255]');
+    }
     if(this.lastBuild !== null && !(typeof this.lastBuild==='number' && this.lastBuild>=0 && this.lastBuild<=18014398509481982)){
       throw new Error('attribute lastBuild(last_build) must be a number in [0,18014398509481982]');
     }
@@ -314,6 +318,7 @@ const FieldMap = {
   id: 'id',
   project_name: 'name',
   status: 'status',
+  https: 'https',
   last_build: 'lastBuild',
   create_time: 'createTime',
   update_time: 'updateTime',
@@ -323,6 +328,7 @@ const KeyMap = {
   id: 'id',
   name: 'project_name',
   status: 'status',
+  https: 'https',
   lastBuild: 'last_build',
   createTime: 'create_time',
   updateTime: 'update_time',

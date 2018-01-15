@@ -14,7 +14,7 @@ services:
       `;
 }
 
-function pathTpl(isHttps){
+function pathTpl(){
   let result = ``;
   let tpl = `
       - path: /{1}
@@ -30,7 +30,7 @@ function pathTpl(isHttps){
         .replace('{1}',p.name.split('/').pop())
         .replace('{2}',p.name.replace(/\/|_/g,'-').toLowerCase())
         .replace('{3}',p.name.replace(/\/|_/g,'-'));
-      if(isHttps){
+      if(1*p.https){
         result = result.replace('{http}','https').replace('{port}','443');
       }else{
         result = result.replace('{http}','http').replace('{port}','2018');
@@ -42,7 +42,7 @@ function pathTpl(isHttps){
   return result;
 }
 
-function rancherCompose(isHttps){
+function rancherCompose(){
   return `version: '2'
 services:
   proxy:
@@ -51,7 +51,7 @@ services:
     lb_config:
       certs: []
       default_cert: fcc.lanhao.name
-      port_rules:${pathTpl(isHttps)}
+      port_rules:${pathTpl()}
     health_check:
       response_timeout: 2000
       healthy_threshold: 2
@@ -64,7 +64,7 @@ services:
 
 
 
-module.exports = (isHttps)=>{
+module.exports = ()=>{
   fs.writeFileSync(process.cwd()+'/docker-compose.yml',dockerCompose());
-  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose(isHttps));
+  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose());
 }

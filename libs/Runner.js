@@ -146,7 +146,7 @@ class Runner {
     }
     process.chdir(process.cwd() + '/entrance');
 
-    entranceYml(frogConfig.https);
+    entranceYml();
 
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
       //状态设置成失败
