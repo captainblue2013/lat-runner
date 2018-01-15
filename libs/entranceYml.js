@@ -50,6 +50,7 @@ services:
     start_on_create: true
     lb_config:
       certs: []
+      default_cert: fcc.lanhao.name
       port_rules:${pathTpl(isHttps)}
     health_check:
       response_timeout: 2000
