@@ -57,7 +57,7 @@ class Runner {
       return;
     }
 
-    const frogConfig = {};
+    let frogConfig = {};
     if(fs.existsSync(`${process.cwd()}/frog.json`)){
       frogConfig = require(`${process.cwd()}/frog.json`);
     }
