@@ -131,6 +131,7 @@ class Runner {
     }
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`).code !== 0) {
       //状态设置成失败
+      console.log(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`);
       await this.error(event,'rancher up failed');
       return;
     }
