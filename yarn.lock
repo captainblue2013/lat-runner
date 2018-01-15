@@ -57,9 +57,9 @@ dotenvr@^0.1.11:
   version "0.1.11"
   resolved "https://registry.yarnpkg.com/dotenvr/-/dotenvr-0.1.11.tgz#15e574ea31e6a4f3cbff21a3834c7a1ae6b97342"
 
-dotenvr@^0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/dotenvr/-/dotenvr-0.1.12.tgz#ac01144bca7d67fd68d539303e2dd614ba429c7a"
+dotenvr@^0.1.13:
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/dotenvr/-/dotenvr-0.1.13.tgz#45e6b5b52807620fbd6dba35d957ecf4c90501ac"
 
 double-ended-queue@^2.1.0-0:
   version "2.1.0-0"
