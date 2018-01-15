@@ -7,20 +7,21 @@ services:
     image: rancher/lb-service-haproxy:v0.7.9
     ports:
     - 2018:2018/tcp
+    - 443:443/tcp
     labels:
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: 'true'
       `;
 }
 
-function pathTpl(){
+function pathTpl(isHttps){
   let result = ``;
   let tpl = `
       - path: /{1}
         priority: 1
-        protocol: http
+        protocol: {http}
         service: {2}/{3}
-        source_port: 2018
+        source_port: {port}
         target_port: 80`;
   for(let k in process.projectMap){
     let p = process.projectMap[k];
@@ -29,6 +30,11 @@ function pathTpl(){
         .replace('{1}',p.name.split('/').pop())
         .replace('{2}',p.name.replace(/\/|_/g,'-').toLowerCase())
         .replace('{3}',p.name.replace(/\/|_/g,'-'));
+      if(isHttps){
+        result = result.replace('{http}','https').replace('{port}','443');
+      }else{
+        result = result.replace('{http}','http').replace('{port}','2018');
+      }
     }else{
       continue;
     }
@@ -36,7 +42,7 @@ function pathTpl(){
   return result;
 }
 
-function rancherCompose(){
+function rancherCompose(isHttps){
   return `version: '2'
 services:
   proxy:
@@ -44,7 +50,7 @@ services:
     start_on_create: true
     lb_config:
       certs: []
-      port_rules:${pathTpl()}
+      port_rules:${pathTpl(isHttps)}
     health_check:
       response_timeout: 2000
       healthy_threshold: 2
@@ -57,7 +63,7 @@ services:
 
 
 
-module.exports = ()=>{
+module.exports = (isHttps)=>{
   fs.writeFileSync(process.cwd()+'/docker-compose.yml',dockerCompose());
-  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose());
+  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose(isHttps));
 }

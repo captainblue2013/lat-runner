@@ -57,6 +57,11 @@ class Runner {
       return;
     }
 
+    const frogConfig = {};
+    if(fs.existsSync(`${process.cwd()}/frog.json`)){
+      frogConfig = require(`${process.cwd()}/frog.json`);
+    }
+
     //判断项目类型
     if (fs.existsSync(`${process.cwd()}/index.html`) || fs.existsSync(`${process.cwd()}/index.htm`)) {
       //理解为静态项目
@@ -116,6 +121,7 @@ class Runner {
       await this.error('Build image failed');
       return;
     }
+    
     const envData = require('dotenvr').load(`${process.cwd()}/.env.example`);
     
     renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(),envData);
@@ -139,7 +145,8 @@ class Runner {
       fs.mkdirSync(process.cwd() + '/entrance');
     }
     process.chdir(process.cwd() + '/entrance');
-    entranceYml();
+
+    entranceYml(frogConfig.https);
 
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
       //状态设置成失败
