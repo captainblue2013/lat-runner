@@ -122,9 +122,11 @@ class Runner {
       return;
     }
     
-    let envData = {};
+    let envData = {
+      BUILDER:'xiaolan'
+    };
     if(fs.existsSync(`${process.cwd()}/.env.example`)){
-      require('dotenvr').load(`${process.cwd()}/.env.example`);
+      envData = Objeject.assign(envData,require('dotenvr').load(`${process.cwd()}/.env.example`));
     }
     
     renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(),envData);
