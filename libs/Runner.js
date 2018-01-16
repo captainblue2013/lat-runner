@@ -122,7 +122,10 @@ class Runner {
       return;
     }
     
-    const envData = require('dotenvr').load(`${process.cwd()}/.env.example`);
+    let envData = {};
+    if(fs.existsSync(`${process.cwd()}/.env.example`)){
+      require('dotenvr').load(`${process.cwd()}/.env.example`);
+    }
     
     renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(),envData);
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {

@@ -3,7 +3,32 @@
   "errors": {
     "error.COMMON_ERROR": {
       "code": 1001500001,
-      "message": "[COMMON_ERROR]通用错误: ",
+      "message": "[COMMON_ERROR]通用错误: undefined",
+      "data": null
+    },
+    "error.RANDOM_ERROR": {
+      "code": 1001500002,
+      "message": "[RANDOM_ERROR]随机错误: ",
+      "data": null
+    },
+    "error.UNFINISHED_TASK": {
+      "code": 1001409001,
+      "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+      "data": null
+    },
+    "error.UNHAPPY_ERROR": {
+      "code": 1001500003,
+      "message": "[UNHAPPY_ERROR]管理员不高兴: ",
+      "data": null
+    },
+    "error.FORBIDDEN": {
+      "code": 1001403001,
+      "message": "[FORBIDDEN]没有权限: ",
+      "data": null
+    },
+    "error.NOT_ALLOW": {
+      "code": 1001403002,
+      "message": "[NOT_ALLOW]不被允许的项目: undefined",
       "data": null
     },
     "error.INTERNAL_ERROR": {
@@ -68,7 +93,7 @@
             {
               "code": {
                 "_type": "number",
-                "_assert": 0
+                "_assert": 200
               },
               "data": [
                 {
@@ -140,7 +165,7 @@
             {
               "code": {
                 "_type": "number",
-                "_assert": 0
+                "_assert": 200
               },
               "data": [
                 {
@@ -174,7 +199,7 @@
             {
               "code": {
                 "_type": "number",
-                "_assert": 0
+                "_assert": 200
               },
               "data": [
                 {
@@ -279,7 +304,7 @@
             {
               "code": {
                 "_type": "number",
-                "_assert": 0
+                "_assert": 200
               },
               "data": {
                 "id": {
@@ -320,13 +345,13 @@
           ],
           "failed": [
             {
-              "code": -1,
-              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
+              "code": 1001403002,
+              "message": "[NOT_ALLOW]不被允许的项目: undefined",
               "data": null
             },
             {
-              "code": -1,
-              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
+              "code": 1001409001,
+              "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
               "data": null
             }
           ]
@@ -371,7 +396,7 @@
             {
               "code": {
                 "_type": "number",
-                "_assert": 0
+                "_assert": 200
               },
               "data": {
                 "id": {
@@ -403,8 +428,8 @@
           ],
           "failed": [
             {
-              "code": -1,
-              "message": "[INTERNAL_ERROR]Internal Error: not defined: ",
+              "code": 1001500001,
+              "message": "[COMMON_ERROR]通用错误: undefined",
               "data": null
             }
           ]
