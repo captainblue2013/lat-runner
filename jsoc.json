@@ -3,7 +3,7 @@
   "errors": {
     "error.COMMON_ERROR": {
       "code": 1001500001,
-      "message": "[COMMON_ERROR]通用错误: undefined",
+      "message": "[COMMON_ERROR]通用错误: ",
       "data": null
     },
     "error.RANDOM_ERROR": {
@@ -23,7 +23,7 @@
     },
     "error.FORBIDDEN": {
       "code": 1001403001,
-      "message": "[FORBIDDEN]没有权限: ",
+      "message": "[FORBIDDEN]没有权限: undefined",
       "data": null
     },
     "error.NOT_ALLOW": {
@@ -428,8 +428,8 @@
           ],
           "failed": [
             {
-              "code": 1001500001,
-              "message": "[COMMON_ERROR]通用错误: undefined",
+              "code": 1001403001,
+              "message": "[FORBIDDEN]没有权限: undefined",
               "data": null
             }
           ]
