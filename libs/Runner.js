@@ -37,9 +37,9 @@ class Runner {
     shell.exec(`rm -fr .*`);
 
     //克隆git仓库
-    if (shell.exec(`git clone https://github.com/${event.project}.git .`).code !== 0) {
+    if (shell.exec(`git clone ${event.gitRemote} .`).code !== 0) {
       //状态设置成失败
-      await this.error(event, 'Git Clone Failed:' + `git clone https://github.com/${event.project}.git`);
+      await this.error(event, 'Git Clone Failed:' + `git clone ${event.gitRemote}`);
       return;
     }
 
