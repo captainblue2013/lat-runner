@@ -23,6 +23,7 @@ class Runner {
     }
 
     //状态设置成进行中
+    console.log('Job Start');
     event.status = 1;
     await event.update(true);
 
@@ -126,7 +127,7 @@ class Runner {
       BUILDER: 'xiaolan'
     };
     if (fs.existsSync(`${process.cwd()}/.env.example`)) {
-      envData = Objeject.assign(envData, require('dotenvr').load(`${process.cwd()}/.env.example`));
+      envData = Object.assign(envData, require('dotenvr').load(`${process.cwd()}/.env.example`));
     }
 
     renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(), envData);
@@ -177,6 +178,7 @@ class Runner {
   }
 
   async error(event, msg) {
+    console.log(msg);
     event.status = 3;
     event.remark = msg;
     event.updateTime = Number.parseInt(Date.now() / 1000);
