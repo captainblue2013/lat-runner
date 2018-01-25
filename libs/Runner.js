@@ -35,7 +35,7 @@ class Runner {
 
 
     shell.exec(`rm -fr *`);
-    shell.exec(`rm -fr .git`);
+    shell.exec(`rm -fr .*`);
 
     //克隆git仓库
     if (shell.exec(`git clone ${event.gitRemote} .`).code !== 0) {
