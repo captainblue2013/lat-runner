@@ -31,7 +31,7 @@ module.exports = async (Event) => {
     let date = new Date();
     model.updateTime = model.createTime = Number.parseInt(date.getTime() / 1000);
     let saved = await model.save(true);
-    child_process.exec(`node ${process.cwd()}/cmd/job.js ${model.id} >/tmp/lat-runner-log/${model.id}`, null, (err, stdo, stde) => {
+    child_process.exec(`node ${process.cwd()}/cmd/job.js ${model.id}`, null, (err, stdo, stde) => {
       console.log(stdo);
     });
 
