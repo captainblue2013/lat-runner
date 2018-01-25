@@ -35,7 +35,7 @@ class Runner {
 
 
     shell.exec(`rm -fr *`);
-    shell.exec(`rm -fr .*`);
+    shell.exec(`rm -fr .git`);
 
     //克隆git仓库
     if (shell.exec(`git clone ${event.gitRemote} .`).code !== 0) {
@@ -86,9 +86,9 @@ class Runner {
         await this.error(event, 'package.json 缺少 npm start 命令');
         return;
       }
-      if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+      if (shell.exec('yarn').code !== 0) {
         //状态设置成失败
-        await this.error('npm install Failed');
+        await this.error('yarn install Failed');
         return;
       }
       //执行测试脚本
@@ -129,8 +129,9 @@ class Runner {
     if (fs.existsSync(`${process.cwd()}/.env.example`)) {
       envData = Object.assign(envData, require('dotenvr').load(`${process.cwd()}/.env.example`));
     }
-
-    renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(), envData);
+    if ((!fs.existsSync(process.cwd() + '/docker-compose.yml')) || (!fs.existsSync(process.cwd() + '/rancher-compose.yml'))) {
+      renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(), envData);
+    }
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
       await this.error(event, 'Create docker-compose.yml Failed');
@@ -152,16 +153,19 @@ class Runner {
     }
     process.chdir(process.cwd() + '/entrance');
 
-    entranceYml();
-
-    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
-      //状态设置成失败
-      await this.error(event, 'rancher up entrance failed');
-      return;
+    if(!frogConfig.standalone){
+      entranceYml();
+      if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
+        //状态设置成失败
+        await this.error(event, 'rancher up entrance failed');
+        return;
+      }
     }
+
     event.status = 2;
     event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
+    
     return process.cwd()
 
   }
