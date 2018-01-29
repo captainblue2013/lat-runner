@@ -124,7 +124,8 @@ class Runner {
     }
 
     let envData = {
-      BUILDER: 'xiaolan'
+      BUILDER: 'xiaolan',
+      PORT: 80
     };
     if (fs.existsSync(`${process.cwd()}/.env.example`)) {
       envData = Object.assign(envData, require('dotenvr').load(`${process.cwd()}/.env.example`));
