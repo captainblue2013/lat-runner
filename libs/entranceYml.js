@@ -14,7 +14,7 @@ services:
       `;
 }
 
-function pathTpl(excludes=[]){
+function pathTpl(){
   let result = ``;
   let tpl = `
       - path: /{1}
@@ -25,7 +25,7 @@ function pathTpl(excludes=[]){
         target_port: 80`;
   for(let k in process.projectMap){
     let p = process.projectMap[k];
-    if(excludes.includes(p.id)){
+    if(p.internal > 0){
       continue;
     }
     if(p.status==1){
@@ -54,7 +54,7 @@ services:
     lb_config:
       certs: []
       default_cert: fcc.lanhao.name
-      port_rules:${pathTpl(excludes)}
+      port_rules:${pathTpl()}
     health_check:
       response_timeout: 2000
       healthy_threshold: 2
@@ -67,7 +67,7 @@ services:
 
 
 
-module.exports = (excludes=[])=>{
+module.exports = ()=>{
   fs.writeFileSync(process.cwd()+'/docker-compose.yml',dockerCompose());
-  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose(excludes));
+  fs.writeFileSync(process.cwd()+'/rancher-compose.yml',rancherCompose());
 }

@@ -8,6 +8,6 @@ module.exports = async ()=>{
     for(let k in rows){
         process.projectMap[rows[k].name] = rows[k];
     }
-    
+    console.log(process.projectMap);
     return true;
 };

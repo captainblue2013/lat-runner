@@ -9,6 +9,7 @@ class Project {
     this.name = (data.name||data.project_name)||'';
     this.status = (data.status||data.status)||0;
     this.https = (data.https||data.https)||0;
+    this.internal = (data.internal||data.internal)||0;
     this.lastBuild = (data.lastBuild||data.last_build)||0;
     this.createTime = (data.createTime||data.create_time)||0;
     this.updateTime = (data.updateTime||data.update_time)||0;
@@ -191,7 +192,7 @@ class Project {
     if(conditions.length){
       sql += 'where '+conditions.join(' and ');
     }
-    //@row
+    //@number
     return new Promise((resolved,rejected)=>{
       Connection.query({sql:sql,params:params}, (e,r)=>{
         if(e){
@@ -232,6 +233,9 @@ class Project {
     }
     if(this.https !== null && !(typeof this.https==='number' && this.https>=0 && this.https<=255)){
       throw new Error('attribute https(https) must be a number in [0,255]');
+    }
+    if(this.internal !== null && !(typeof this.internal==='number' && this.internal>=0 && this.internal<=255)){
+      throw new Error('attribute internal(internal) must be a number in [0,255]');
     }
     if(this.lastBuild !== null && !(typeof this.lastBuild==='number' && this.lastBuild>=0 && this.lastBuild<=18014398509481982)){
       throw new Error('attribute lastBuild(last_build) must be a number in [0,18014398509481982]');
@@ -319,6 +323,7 @@ const FieldMap = {
   project_name: 'name',
   status: 'status',
   https: 'https',
+  internal: 'internal',
   last_build: 'lastBuild',
   create_time: 'createTime',
   update_time: 'updateTime',
@@ -329,6 +334,7 @@ const KeyMap = {
   name: 'project_name',
   status: 'status',
   https: 'https',
+  internal: 'internal',
   lastBuild: 'last_build',
   createTime: 'create_time',
   updateTime: 'update_time',

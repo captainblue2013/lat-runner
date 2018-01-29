@@ -58,11 +58,6 @@ class Runner {
       return;
     }
 
-    let frogConfig = {};
-    if (fs.existsSync(`${process.cwd()}/frog.json`)) {
-      frogConfig = require(`${process.cwd()}/frog.json`);
-    }
-
     //判断项目类型
     if (fs.existsSync(`${process.cwd()}/index.html`) || fs.existsSync(`${process.cwd()}/index.htm`)) {
       //理解为静态项目
@@ -154,12 +149,7 @@ class Runner {
     }
     process.chdir(process.cwd() + '/entrance');
 
-    if(!frogConfig.standalone){
-      entranceYml([]);
-    }else{
-      entranceYml([event.id]);
-    }
-    
+    entranceYml();
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
       //状态设置成失败
       await this.error(event, 'rancher up entrance failed');

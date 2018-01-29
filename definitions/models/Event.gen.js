@@ -176,7 +176,7 @@ class Event {
     if(conditions.length){
       sql += 'where '+conditions.join(' and ');
     }
-    //@row
+    //@number
     return new Promise((resolved,rejected)=>{
       Connection.query({sql:sql,params:params}, (e,r)=>{
         if(e){
