@@ -10,6 +10,8 @@ services:
     image: ${image}
     environment:${envList(data)}
     stdin_open: true
+    external_links:
+    - db/db:mysql
     tty: true
 `;
     return tpl;
