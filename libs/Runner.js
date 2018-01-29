@@ -155,14 +155,16 @@ class Runner {
     process.chdir(process.cwd() + '/entrance');
 
     if(!frogConfig.standalone){
-      entranceYml();
-      if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
-        //状态设置成失败
-        await this.error(event, 'rancher up entrance failed');
-        return;
-      }
+      entranceYml([]);
+    }else{
+      entranceYml([event.id]);
     }
-
+    
+    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
+      //状态设置成失败
+      await this.error(event, 'rancher up entrance failed');
+      return;
+    }
     event.status = 2;
     event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
