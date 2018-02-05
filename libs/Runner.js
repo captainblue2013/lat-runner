@@ -69,15 +69,22 @@ class Runner {
           //fixed package
           projectPackage.devDependencies = {};
           fs.writeFileSync(`${process.cwd()}/package.json`, JSON.stringify(projectPackage, null, 2));
-          
+
           process.env.PUBLIC_URL = projectPackage.fcc.publicUrl;
           if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
             await this.error(event, 'react yarn failed');
             return;
           }
-          if (shell.exec('npm run build').code !== 0) {
-            await this.error(event, 'react build failed');
-            return;
+          if (projectPackage.scripts['build-js']) {
+            if (shell.exec('npm run build-js').code !== 0) {
+              await this.error(event, 'react build failed');
+              return;
+            }
+          } else {
+            if (shell.exec('npm run build').code !== 0) {
+              await this.error(event, 'react build failed');
+              return;
+            }
           }
           process.chdir(`${process.cwd()}/build`)
 
