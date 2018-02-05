@@ -66,8 +66,12 @@ class Runner {
     if (projectPackage.fcc && projectPackage.fcc.type) {
       switch (projectPackage.fcc.type) {
         case 'react':
+          //fixed package
+          projectPackage.devDependencies = {};
+          fs.writeFileSync(`${process.cwd()}/package.json`, JSON.stringify(projectPackage, null, 2));
+          
           process.env.PUBLIC_URL = projectPackage.fcc.publicUrl;
-          if (shell.exec('yarn').code !== 0) {
+          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
             await this.error(event, 'react yarn failed');
             return;
           }
@@ -90,7 +94,7 @@ class Runner {
           break;
         case 'vue':
           //vue 项目 
-          if (shell.exec('yarn').code !== 0) {
+          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
             await this.error(event, 'vue yarn failed');
             return;
           }
@@ -123,9 +127,9 @@ class Runner {
             await this.error(event, 'package.json 缺少 npm start 命令');
             return;
           }
-          if (shell.exec('yarn').code !== 0) {
+          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
             //状态设置成失败
-            await this.error(event, 'yarn install Failed');
+            await this.error(event, 'npm install Failed');
             return;
           }
           //执行测试脚本
@@ -152,8 +156,8 @@ class Runner {
         }
       } else if (fs.existsSync(`${process.cwd()}/build`)) {
         //react 项目
-        if (shell.exec('yarn').code !== 0) {
-          await this.error(event, 'react yarn failed');
+        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+          await this.error(event, 'react npm install failed');
           return;
         }
         process.env.PUBLIC_URL = `http://fcc.lanhao.name/${event.project.split('/').pop()}`;
@@ -170,8 +174,8 @@ class Runner {
         }
       } else if (fs.existsSync(`${process.cwd()}/dist`)) {
         //vue 项目
-        if (shell.exec('yarn').code !== 0) {
-          await this.error(event, 'vue yarn failed');
+        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+          await this.error(event, 'vue npm failed');
           return;
         }
         if (shell.exec('npm run build').code !== 0) {
@@ -202,9 +206,9 @@ class Runner {
           await this.error(event, 'package.json 缺少 npm start 命令');
           return;
         }
-        if (shell.exec('yarn').code !== 0) {
+        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
           //状态设置成失败
-          await this.error(event, 'yarn install Failed');
+          await this.error(event, 'npm install Failed');
           return;
         }
         //执行测试脚本
