@@ -11,7 +11,7 @@ CMD ["nginx","-g","daemon off;"]
     return `FROM node:8.8.1
 COPY . /app
 WORKDIR /app
-RUN npm install --registry=https://registry.npm.taobao.org
+RUN yarn
 CMD ["npm", "start"]
     `;
   },
