@@ -65,7 +65,7 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    } else if (fs.existsSync(`${process.cwd()}/build/index.html`)) {
+    } else if (fs.existsSync(`${process.cwd()}/build`)) {
       //react 项目
       if (shell.exec('yarn').code !== 0) {
         await this.error(event, 'react yarn failed');
@@ -83,7 +83,7 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    } else if (fs.existsSync(`${process.cwd()}/dist/index.html`)) {
+    } else if (fs.existsSync(`${process.cwd()}/dist`)) {
       //vue 项目
       if (shell.exec('yarn').code !== 0) {
         await this.error(event, 'vue yarn failed');
