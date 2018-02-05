@@ -65,10 +65,14 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    }else if(fs.existsSync(`${process.cwd()}/build/index.html`)){
+    } else if (fs.existsSync(`${process.cwd()}/build/index.html`)) {
       //react 项目
-      if(shell.exec('npm run build').code !== 0){
-        await this.error(event,'react build failed');
+      if (shell.exec('yarn').code !== 0) {
+        await this.error(event, 'react yarn failed');
+        return;
+      }
+      if (shell.exec('npm run build').code !== 0) {
+        await this.error(event, 'react build failed');
         return;
       }
       process.chdir(`${process.cwd()}/build`);
@@ -76,10 +80,14 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    }else if(fs.existsSync(`${process.cwd()}/dist/index.html`)){
+    } else if (fs.existsSync(`${process.cwd()}/dist/index.html`)) {
       //vue 项目
-      if(shell.exec('npm run build').code !== 0){
-        await this.error('react build failed');
+      if (shell.exec('yarn').code !== 0) {
+        await this.error(event, 'vue yarn failed');
+        return;
+      }
+      if (shell.exec('npm run build').code !== 0) {
+        await this.error(event, 'react build failed');
         return;
       }
       process.chdir(`${process.cwd()}/dist`);
@@ -87,7 +95,7 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    }else if (fs.existsSync(`${process.cwd()}/package.json`)) {
+    } else if (fs.existsSync(`${process.cwd()}/package.json`)) {
       //理解为node项目
       //检查script
       let pkg = require(`${process.cwd()}/package.json`);
@@ -105,7 +113,7 @@ class Runner {
       }
       if (shell.exec('yarn').code !== 0) {
         //状态设置成失败
-        await this.error('yarn install Failed');
+        await this.error(event, 'yarn install Failed');
         return;
       }
       //执行测试脚本
@@ -136,7 +144,7 @@ class Runner {
     shell.exec(`docker rmi -f ${imageName}`);
     if (shell.exec(`docker build -t ${imageName} .`).code !== 0) {
       //状态设置成失败
-      await this.error('Build image failed');
+      await this.error(event, 'Build image failed');
       return;
     }
 
@@ -157,7 +165,7 @@ class Runner {
     }
     if (!fs.existsSync(process.cwd() + '/rancher-compose.yml')) {
       //状态设置成失败
-      await this.error('Create rancher-compose.yml Failed');
+      await this.error(event, 'Create rancher-compose.yml Failed');
       return;
     }
     if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`).code !== 0) {
@@ -180,7 +188,7 @@ class Runner {
     event.status = 2;
     event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
-    
+
     return process.cwd()
 
   }
