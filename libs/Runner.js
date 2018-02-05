@@ -68,7 +68,7 @@ class Runner {
     }else if(fs.existsSync(`${process.cwd()}/build/index.html`)){
       //react 项目
       if(shell.exec('npm run build').code !== 0){
-        await this.error('react build failed');
+        await this.error(event,'react build failed');
         return;
       }
       process.chdir(`${process.cwd()}/build`);
