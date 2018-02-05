@@ -65,7 +65,29 @@ class Runner {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
       }
-    } else if (fs.existsSync(`${process.cwd()}/package.json`)) {
+    }else if(fs.existsSync(`${process.cwd()}/build/index.html`)){
+      //react 项目
+      if(shell.exec('npm run build').code !== 0){
+        await this.error('react build failed');
+        return;
+      }
+      process.chdir(`${process.cwd()}/build`);
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
+      }
+    }else if(fs.existsSync(`${process.cwd()}/dist/index.html`)){
+      //vue 项目
+      if(shell.exec('npm run build').code !== 0){
+        await this.error('react build failed');
+        return;
+      }
+      process.chdir(`${process.cwd()}/dist`);
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
+      }
+    }else if (fs.existsSync(`${process.cwd()}/package.json`)) {
       //理解为node项目
       //检查script
       let pkg = require(`${process.cwd()}/package.json`);

@@ -13,7 +13,7 @@
     },
     "error.UNFINISHED_TASK": {
       "code": 1001409001,
-      "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
+      "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
       "data": null
     },
     "error.UNHAPPY_ERROR": {
@@ -23,12 +23,12 @@
     },
     "error.FORBIDDEN": {
       "code": 1001403001,
-      "message": "[FORBIDDEN]没有权限: undefined",
+      "message": "[FORBIDDEN]没有权限: ",
       "data": null
     },
     "error.NOT_ALLOW": {
       "code": 1001403002,
-      "message": "[NOT_ALLOW]不被允许的项目: undefined",
+      "message": "[NOT_ALLOW]不被允许的项目: ",
       "data": null
     },
     "error.INTERNAL_ERROR": {
@@ -181,6 +181,9 @@
                   "https": {
                     "_type": "number"
                   },
+                  "internal": {
+                    "_type": "number"
+                  },
                   "lastBuild": {
                     "_type": "number"
                   },
@@ -213,6 +216,9 @@
                     "_type": "number"
                   },
                   "https": {
+                    "_type": "number"
+                  },
+                  "internal": {
                     "_type": "number"
                   },
                   "lastBuild": {
@@ -306,6 +312,26 @@
                 "_type": "number",
                 "_assert": 200
               },
+              "data": {},
+              "message": {
+                "_type": "string"
+              }
+            },
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 200
+              },
+              "data": {},
+              "message": {
+                "_type": "string"
+              }
+            },
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 200
+              },
               "data": {
                 "id": {
                   "_type": "number"
@@ -343,18 +369,7 @@
               }
             }
           ],
-          "failed": [
-            {
-              "code": 1001403002,
-              "message": "[NOT_ALLOW]不被允许的项目: undefined",
-              "data": null
-            },
-            {
-              "code": 1001409001,
-              "message": "[UNFINISHED_TASK]还有未完成发布任务: undefined",
-              "data": null
-            }
-          ]
+          "failed": []
         }
       }
     },
@@ -398,6 +413,16 @@
                 "_type": "number",
                 "_assert": 200
               },
+              "data": {},
+              "message": {
+                "_type": "string"
+              }
+            },
+            {
+              "code": {
+                "_type": "number",
+                "_assert": 200
+              },
               "data": {
                 "id": {
                   "_type": "number"
@@ -409,6 +434,9 @@
                   "_type": "number"
                 },
                 "https": {
+                  "_type": "number"
+                },
+                "internal": {
                   "_type": "number"
                 },
                 "lastBuild": {
@@ -426,13 +454,7 @@
               }
             }
           ],
-          "failed": [
-            {
-              "code": 1001403001,
-              "message": "[FORBIDDEN]没有权限: undefined",
-              "data": null
-            }
-          ]
+          "failed": []
         }
       }
     }
