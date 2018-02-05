@@ -71,15 +71,14 @@ class Runner {
         await this.error(event, 'react yarn failed');
         return;
       }
+      process.env.PUBLIC_URL = `http://fcc.lanhao.name/${event.project.split('/').pop()}`;
       if (shell.exec('npm run build').code !== 0) {
         await this.error(event, 'react build failed');
         return;
       }
-      if (shell.exec(`sed 's/\/static/static/g' ${`${process.cwd()}/build/index.html`}`).code !== 0) {
-        await this.error(event, 'react replace path');
-        return;
-      }
-      process.chdir(`${process.cwd()}/build`);
+      
+      process.chdir(`${process.cwd()}/build`)
+
       if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
         //默认的静态项目 Dockerfile
         fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
