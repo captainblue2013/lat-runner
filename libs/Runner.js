@@ -63,178 +63,87 @@ class Runner {
       projectPackage = require(`${process.cwd()}/package.json`);
     }
     //判断项目类型
-    if (projectPackage.fcc && projectPackage.fcc.type) {
-      switch (projectPackage.fcc.type) {
-        case 'react':
-          //fixed package
-          projectPackage.devDependencies = {};
-          fs.writeFileSync(`${process.cwd()}/package.json`, JSON.stringify(projectPackage, null, 2));
 
-          process.env.PUBLIC_URL = projectPackage.fcc.publicUrl;
-          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-            await this.error(event, 'react yarn failed');
-            return;
-          }
-          if (projectPackage.scripts['build-js']) {
-            if (shell.exec('npm run build-js').code !== 0) {
-              await this.error(event, 'react build failed');
-              return;
-            }
-          } else {
-            if (shell.exec('npm run build').code !== 0) {
-              await this.error(event, 'react build failed');
-              return;
-            }
-          }
-          process.chdir(`${process.cwd()}/build`)
+    if (fs.existsSync(`${process.cwd()}/index.html`) || fs.existsSync(`${process.cwd()}/index.htm`)) {
+      //理解为静态项目
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
+      }
+    } else if (fs.existsSync(`${process.cwd()}/build`)) {
+      //react 项目
+      if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+        await this.error(event, 'react npm install failed');
+        return;
+      }
+      process.env.PUBLIC_URL = `http://fcc.lanhao.name/${event.project.split('/').pop()}`;
+      if (shell.exec('npm run build').code !== 0) {
+        await this.error(event, 'react build failed');
+        return;
+      }
 
-          if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-            //默认的静态项目 Dockerfile
-            fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-          }
-          break;
-        case 'html':
-          if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-            //默认的静态项目 Dockerfile
-            fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-          }
-          break;
-        case 'vue':
-          //vue 项目 
-          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-            await this.error(event, 'vue yarn failed');
-            return;
-          }
-          if (shell.exec('npm run build').code !== 0) {
-            await this.error(event, 'vue build failed');
-            return;
-          }
-          if (shell.exec(`sed 's/\/static/static/g' ${`${process.cwd()}/dist/index.html`}`).code !== 0) {
-            await this.error(event, 'vue replace path');
-            return;
-          }
-          process.chdir(`${process.cwd()}/dist`);
-          if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-            //默认的静态项目 Dockerfile
-            fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-          }
-          break;
-        case 'node':
-          //检查script
-          let pkg = require(`${process.cwd()}/package.json`);
-          if (!pkg.scripts) {
-            await this.error(event, 'package.json 缺少 scripts');
-            return;
-          }
-          if (!pkg.scripts.test) {
-            await this.error(event, 'package.json 缺少 npm run test 命令');
-            return;
-          }
-          if (!pkg.scripts.start) {
-            await this.error(event, 'package.json 缺少 npm start 命令');
-            return;
-          }
-          if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-            //状态设置成失败
-            await this.error(event, 'npm install Failed');
-            return;
-          }
-          //执行测试脚本
-          if (shell.exec(`npm run test`).code !== 0) {
-            //状态设置成失败
-            await this.error(event, 'npm run test Failed');
-            return;
-          }
-          if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-            //默认的静态项目 Dockerfile
-            fs.writeFileSync(`${process.cwd()}/Dockerfile`, dockerfile.node(event.project.split('/').pop()))
-          }
-          if (!fs.existsSync(`${process.cwd()}/.dockerignore`)) {
-            fs.writeFileSync(`${process.cwd()}/.dockerignore`, `node_modules${EOL}.git`)
-          }
-          break;
+      process.chdir(`${process.cwd()}/build`)
+
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
+      }
+    } else if (fs.existsSync(`${process.cwd()}/dist`)) {
+      //vue 项目
+      if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+        await this.error(event, 'vue npm failed');
+        return;
+      }
+      if (shell.exec('npm run build').code !== 0) {
+        await this.error(event, 'vue build failed');
+        return;
+      } if (shell.exec(`sed 's/\/static/static/g' ${`${process.cwd()}/dist/index.html`}`).code !== 0) {
+        await this.error(event, 'vue replace path');
+        return;
+      }
+      process.chdir(`${process.cwd()}/dist`);
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
+      }
+    } else if (fs.existsSync(`${process.cwd()}/package.json`)) {
+      //理解为node项目
+      //检查script
+      let pkg = require(`${process.cwd()}/package.json`);
+      if (!pkg.scripts) {
+        await this.error(event, 'package.json 缺少 scripts');
+        return;
+      }
+      if (!pkg.scripts.test) {
+        await this.error(event, 'package.json 缺少 npm run test 命令');
+        return;
+      }
+      if (!pkg.scripts.start) {
+        await this.error(event, 'package.json 缺少 npm start 命令');
+        return;
+      }
+      if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
+        //状态设置成失败
+        await this.error(event, 'npm install Failed');
+        return;
+      }
+      //执行测试脚本
+      if (shell.exec(`npm run test`).code !== 0) {
+        //状态设置成失败
+        await this.error(event, 'npm run test Failed');
+        return;
+      }
+      if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
+        //默认的静态项目 Dockerfile
+        fs.writeFileSync(`${process.cwd()}/Dockerfile`, dockerfile.node(event.project.split('/').pop()))
+      }
+      if (!fs.existsSync(`${process.cwd()}/.dockerignore`)) {
+        fs.writeFileSync(`${process.cwd()}/.dockerignore`, `node_modules${EOL}.git`)
       }
     } else {
-      if (fs.existsSync(`${process.cwd()}/index.html`) || fs.existsSync(`${process.cwd()}/index.htm`)) {
-        //理解为静态项目
-        if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-          //默认的静态项目 Dockerfile
-          fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-        }
-      } else if (fs.existsSync(`${process.cwd()}/build`)) {
-        //react 项目
-        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-          await this.error(event, 'react npm install failed');
-          return;
-        }
-        process.env.PUBLIC_URL = `http://fcc.lanhao.name/${event.project.split('/').pop()}`;
-        if (shell.exec('npm run build').code !== 0) {
-          await this.error(event, 'react build failed');
-          return;
-        }
-
-        process.chdir(`${process.cwd()}/build`)
-
-        if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-          //默认的静态项目 Dockerfile
-          fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-        }
-      } else if (fs.existsSync(`${process.cwd()}/dist`)) {
-        //vue 项目
-        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-          await this.error(event, 'vue npm failed');
-          return;
-        }
-        if (shell.exec('npm run build').code !== 0) {
-          await this.error(event, 'vue build failed');
-          return;
-        } if (shell.exec(`sed 's/\/static/static/g' ${`${process.cwd()}/dist/index.html`}`).code !== 0) {
-          await this.error(event, 'vue replace path');
-          return;
-        }
-        process.chdir(`${process.cwd()}/dist`);
-        if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-          //默认的静态项目 Dockerfile
-          fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
-        }
-      } else if (fs.existsSync(`${process.cwd()}/package.json`)) {
-        //理解为node项目
-        //检查script
-        let pkg = require(`${process.cwd()}/package.json`);
-        if (!pkg.scripts) {
-          await this.error(event, 'package.json 缺少 scripts');
-          return;
-        }
-        if (!pkg.scripts.test) {
-          await this.error(event, 'package.json 缺少 npm run test 命令');
-          return;
-        }
-        if (!pkg.scripts.start) {
-          await this.error(event, 'package.json 缺少 npm start 命令');
-          return;
-        }
-        if (shell.exec('npm install --registry=https://registry.npm.taobao.org').code !== 0) {
-          //状态设置成失败
-          await this.error(event, 'npm install Failed');
-          return;
-        }
-        //执行测试脚本
-        if (shell.exec(`npm run test`).code !== 0) {
-          //状态设置成失败
-          await this.error(event, 'npm run test Failed');
-          return;
-        }
-        if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
-          //默认的静态项目 Dockerfile
-          fs.writeFileSync(`${process.cwd()}/Dockerfile`, dockerfile.node(event.project.split('/').pop()))
-        }
-        if (!fs.existsSync(`${process.cwd()}/.dockerignore`)) {
-          fs.writeFileSync(`${process.cwd()}/.dockerignore`, `node_modules${EOL}.git`)
-        }
-      } else {
-        //理解为其他项目
-      }
+      //理解为其他项目
     }
+
 
     if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
       //状态设置成失败
