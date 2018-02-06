@@ -21,6 +21,9 @@ module.exports = async (Event) => {
   } else {
     return error.NOT_ALLOW;
   }
+  if (Event.branch !== 'master'){
+    return error.BRANCH_NOT_ALLOW;
+  }
   Event.branch = Event.branch.split('/').pop();
   let exists = await EventModel.fetchByProjectBranchHash(Event.project, Event.branch, Event.hash);
 

@@ -37,4 +37,10 @@ module.exports = [
     code: (process.env.APPID || 1001)*1e6+403002,
     message: '不被允许的项目',
   },
+  {
+    name: 'BRANCH_NOT_ALLOW',
+    httpStatus: 403,
+    code: (process.env.APPID || 1001)*1e6+403003,
+    message: '不被允许的分支',
+  },
 ];

@@ -17,6 +17,7 @@ let Error = {
   FORBIDDEN: 403,
   //不被允许的项目
   NOT_ALLOW: 403,
-
+  //不被允许的分支
+  BRANCH_NOT_ALLOW: 403,
 };
 
