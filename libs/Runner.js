@@ -251,7 +251,7 @@ class Runner {
       envData = Object.assign(envData, require('dotenvr').load(`${process.cwd()}/.env.example`));
     }
     if ((!fs.existsSync(process.cwd() + '/docker-compose.yml')) || (!fs.existsSync(process.cwd() + '/rancher-compose.yml'))) {
-      renderYml(event.project.replace(/\/|_/g, '-'), imageName, event.project.split('/').pop(), envData);
+      renderYml(event.project.replace(/\/|_|\./g, '-'), imageName, event.project.split('/').pop(), envData);
     }
     if (!fs.existsSync(process.cwd() + '/docker-compose.yml')) {
       //状态设置成失败
@@ -263,9 +263,9 @@ class Runner {
       await this.error(event, 'Create rancher-compose.yml Failed');
       return;
     }
-    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`).code !== 0) {
+    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_|\./g, '-')}`).code !== 0) {
       //状态设置成失败
-      console.log(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_/g, '-')}`);
+      console.log(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack ${event.project.replace(/\/|_|\./g, '-')}`);
       await this.error(event, 'rancher up failed');
       return;
     }
