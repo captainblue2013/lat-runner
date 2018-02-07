@@ -78,10 +78,11 @@ class Runner {
             return;
           }
           
-          process.chdir(`${process.cwd()}/build`)
+          
 
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
+            process.chdir(`${process.cwd()}/build`)
             fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
           }
           break;
@@ -105,9 +106,10 @@ class Runner {
             await this.error(event, 'vue replace path');
             return;
           }
-          process.chdir(`${process.cwd()}/dist`);
+          
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
+            process.chdir(`${process.cwd()}/dist`);
             fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
           }
           break;
