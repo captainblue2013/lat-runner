@@ -68,7 +68,7 @@ class Runner {
         case 'react':
 
           process.env.PUBLIC_URL = projectPackage.fcc.publicUrl;
-          if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+          if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
             await this.error(event, 'react npm failed');
             return;
           }
@@ -93,7 +93,7 @@ class Runner {
           break;
         case 'vue':
           //vue 项目 
-          if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+          if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
             await this.error(event, 'vue npm failed');
             return;
           }
@@ -126,7 +126,7 @@ class Runner {
             await this.error(event, 'package.json 缺少 npm start 命令');
             return;
           }
-          if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+          if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
             //状态设置成失败
             await this.error(event, 'npm install Failed');
             return;
@@ -155,7 +155,7 @@ class Runner {
         }
       } else if (fs.existsSync(`${process.cwd()}/build`)) {
         //react 项目
-        if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+        if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
           await this.error(event, 'react npm install failed');
           return;
         }
@@ -173,7 +173,7 @@ class Runner {
         }
       } else if (fs.existsSync(`${process.cwd()}/dist`)) {
         //vue 项目
-        if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+        if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
           await this.error(event, 'vue npm failed');
           return;
         }
@@ -205,7 +205,7 @@ class Runner {
           await this.error(event, 'package.json 缺少 npm start 命令');
           return;
         }
-        if (shell.exec('npm --registry https://registry.npm.taobao.org').code !== 0) {
+        if (shell.exec('npm i --registry https://registry.npm.taobao.org').code !== 0) {
           //状态设置成失败
           await this.error(event, 'npm install Failed');
           return;
@@ -234,7 +234,7 @@ class Runner {
       return;
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
-    
+
     console.log(`About building: ${imageName}`);
     shell.exec(`docker rmi -f ${imageName}`);
     if (shell.exec(`docker build -t ${imageName} .`).code !== 0) {
