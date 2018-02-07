@@ -31,8 +31,8 @@ function pathTpl(){
     if(p.status==1){
       result += tpl
         .replace('{1}',p.name.split('/').pop())
-        .replace('{2}',p.name.replace(/\/|_/g,'-').toLowerCase())
-        .replace('{3}',p.name.replace(/\/|_/g,'-'));
+        .replace('{2}',p.name.replace(/\/|_|\./g,'-').toLowerCase())
+        .replace('{3}',p.name.replace(/\/|_|\./g,'-'));
       if(1*p.https){
         result = result.replace('{http}','https').replace('{port}','443');
       }else{
