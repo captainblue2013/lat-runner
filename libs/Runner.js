@@ -234,6 +234,7 @@ class Runner {
       return;
     }
     let imageName = `${event.project}:${event.branch}`.toLowerCase();
+    
     console.log(`About building: ${imageName}`);
     shell.exec(`docker rmi -f ${imageName}`);
     if (shell.exec(`docker build -t ${imageName} .`).code !== 0) {

@@ -21,7 +21,7 @@ module.exports = async (Event) => {
   } else {
     return error.NOT_ALLOW;
   }
-  if (Event.branch !== 'master'){
+  if (Event.branch !== 'refs/heads/master'){
     return error.BRANCH_NOT_ALLOW;
   }
   Event.branch = Event.branch.split('/').pop();
