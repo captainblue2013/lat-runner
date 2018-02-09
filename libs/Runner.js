@@ -63,7 +63,7 @@ class Runner {
       projectPackage = require(`${process.cwd()}/package.json`);
     }
     //判断项目类型
-    if (projectPackage.fcc && projectPackage.fcc.type) {
+    if (projectPackage && projectPackage.fcc && projectPackage.fcc.type) {
       switch (projectPackage.fcc.type) {
         case 'react':
 
