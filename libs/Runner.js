@@ -28,23 +28,38 @@ class Runner {
     await event.update(true);
 
     //进入工作目录
-    if (!fs.existsSync(`${this.buildPath}/${event.project}/${event.branch}`)) {
-      this.makeDir(`${event.project}/${event.branch}`);
+    if (!fs.existsSync(`${this.buildPath}/${event.project}`)) {
+      this.makeDir(`${event.project}`);
     }
-    process.chdir(`${this.buildPath}/${event.project}/${event.branch}`);
+    process.chdir(`${this.buildPath}/${event.project}`);
+    console.log(`Enter Dir: ${this.buildPath}/${event.project}`);
 
+    // shell.exec(`rm -fr *`);
+    // shell.exec(`rm -fr .*`);
 
-    shell.exec(`rm -fr *`);
-    shell.exec(`rm -fr .*`);
-
-    //克隆git仓库
-    if (shell.exec(`git clone ${event.gitRemote} .`).code !== 0) {
-      //状态设置成失败
-      await this.error(event, 'Git Clone Failed:' + `git clone ${event.gitRemote}`);
-      return;
+    //判断是否存在git
+    if (!fs.existsSync(`${this.buildPath}/${event.project}/.git`)) {
+      //克隆git仓库
+      console.log(`git clone ${event.gitRemote} .`);
+      if (shell.exec(`git clone ${event.gitRemote} .`).code !== 0) {
+        //状态设置成失败
+        await this.error(event, 'Git Clone Failed:' + `git clone ${event.gitRemote}`);
+        return;
+      }
+    }else{
+      //拉代码
+      console.log(`git pull origin master`);
+      if (shell.exec(`git pull origin master`).code !== 0) {
+        //状态设置成失败
+        await this.error(event, 'Git Pull Failed:');
+        return;
+      }
     }
+
+
 
     //切糕指定分支
+    console.log(`git checkout ${event.branch}`);
     if (shell.exec(`git checkout ${event.branch}`).code !== 0) {
       //状态设置成失败
       await this.error(event, 'Git Checkout Failed:' + event.branch);
@@ -52,6 +67,7 @@ class Runner {
     }
 
     //切糕指定提交
+    console.log(`git checkout ${event.hash}`);
     if (shell.exec(`git checkout ${event.hash}`).code !== 0) {
       //状态设置成失败
       await this.error(event, 'Git Checkout Failed:' + event.hash);
@@ -62,6 +78,7 @@ class Runner {
     if (fs.existsSync(`${process.cwd()}/package.json`)) {
       projectPackage = require(`${process.cwd()}/package.json`);
     }
+    
     //判断项目类型
     if (projectPackage && projectPackage.fcc && projectPackage.fcc.type) {
       switch (projectPackage.fcc.type) {
@@ -72,13 +89,13 @@ class Runner {
             await this.error(event, 'react npm failed');
             return;
           }
-          
+
           if (shell.exec('npm run build').code !== 0) {
             await this.error(event, 'react build failed');
             return;
           }
-          
-          
+
+
 
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
@@ -106,7 +123,7 @@ class Runner {
             await this.error(event, 'vue replace path');
             return;
           }
-          
+
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
             process.chdir(`${process.cwd()}/dist`);

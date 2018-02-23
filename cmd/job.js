@@ -1,5 +1,6 @@
 'use strict';
-require('dotenvr').load('./.env');
+let config = require('dotenvr').load('./.env');
+Object.assign(process.env, config);
 
 const Runner = require('../libs/Runner');
 
