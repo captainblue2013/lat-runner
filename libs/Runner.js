@@ -5,7 +5,6 @@ const shell = require('shelljs');
 const EOL = require('os').EOL;
 const dotenvr = require('dotenvr');
 const renderYml = require('../libs/renderYml');
-const entranceYml = require('../libs/entranceYml');
 const EventModel = require('../definitions/models/Event.gen');
 const dockerfile = require('../libs/dockerfile');
 
@@ -95,8 +94,6 @@ class Runner {
             return;
           }
 
-
-
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
             process.chdir(`${process.cwd()}/build`)
@@ -119,6 +116,7 @@ class Runner {
             await this.error(event, 'vue build failed');
             return;
           }
+          // todo PUBLIC_URL ?
           if (shell.exec(`sed 's/\/static/static/g' ${`${process.cwd()}/dist/index.html`}`).code !== 0) {
             await this.error(event, 'vue replace path');
             return;
@@ -131,6 +129,7 @@ class Runner {
           }
           break;
         case 'express':
+        case 'node':
           //检查script
           let pkg = require(`${process.cwd()}/package.json`);
           if (!pkg.scripts) {
@@ -252,8 +251,9 @@ class Runner {
       await this.error(event, 'Dockerfile Not Found');
       return;
     }
-    let imageName = `${event.project}:${event.branch}`.toLowerCase();
 
+
+    let imageName = `${event.project}:${event.branch}`.toLowerCase();
     console.log(`About building: ${imageName}`);
     shell.exec(`docker rmi -f ${imageName}`);
     if (shell.exec(`docker build -t ${imageName} .`).code !== 0) {
@@ -288,17 +288,7 @@ class Runner {
       await this.error(event, 'rancher up failed');
       return;
     }
-    if (!fs.existsSync(process.cwd() + '/entrance')) {
-      fs.mkdirSync(process.cwd() + '/entrance');
-    }
-    process.chdir(process.cwd() + '/entrance');
-
-    entranceYml();
-    if (shell.exec(`${process.env['RANCHER']} up -d  --pull --force-upgrade --confirm-upgrade --stack entrance`).code !== 0) {
-      //状态设置成失败
-      await this.error(event, 'rancher up entrance failed');
-      return;
-    }
+    
     event.status = 2;
     event.updateTime = Number.parseInt(Date.now() / 1000);
     await event.update(true);
