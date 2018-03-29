@@ -122,7 +122,12 @@ class Event {
       }else{
         throw new Error('Not Allow Fetching By [ "'+k+'" ]');
       }
-      sql += ' and `'+field+'`=:'+k+'';
+      if (Array.isArray(data[k]) && data[k].length) {
+        sql += ' and `'+field+'` in ("'+data[k].join('","')+'")';
+      } else {
+        sql += ' and `'+field+'`=:'+k+'';
+      }
+      
     }
     sql += ' order by `id` desc limit '+((page-1)*pageSize)+','+pageSize;
     //@list
@@ -141,7 +146,7 @@ class Event {
     });
   }
 
-  static raw(sql='',params={}){
+  static raw(sql='',params={}, obj=true){
     if(!sql.includes('limit')){
       throw new Error('raw sql must with paging');
     }
@@ -151,11 +156,15 @@ class Event {
         if(e){
           rejected(e);
         }else{
-          let result = [];
-          for(let k in r) {
-            result.push(new Event(r[k]));
+          if (obj) {
+            let result = [];
+            for(let k in r) {
+              result.push(new Event(r[k]));
+            }
+            resolved(result);
+          }else{
+            resolved(r);
           }
-          resolved(result);
         }
       });
     });

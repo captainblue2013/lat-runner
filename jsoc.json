@@ -31,6 +31,11 @@
       "message": "[NOT_ALLOW]不被允许的项目: ",
       "data": null
     },
+    "error.BRANCH_NOT_ALLOW": {
+      "code": 1001403003,
+      "message": "[BRANCH_NOT_ALLOW]不被允许的分支: ",
+      "data": null
+    },
     "error.INTERNAL_ERROR": {
       "code": -1,
       "message": "[INTERNAL_ERROR]Internal Error: ",
@@ -312,26 +317,6 @@
                 "_type": "number",
                 "_assert": 200
               },
-              "data": {},
-              "message": {
-                "_type": "string"
-              }
-            },
-            {
-              "code": {
-                "_type": "number",
-                "_assert": 200
-              },
-              "data": {},
-              "message": {
-                "_type": "string"
-              }
-            },
-            {
-              "code": {
-                "_type": "number",
-                "_assert": 200
-              },
               "data": {
                 "id": {
                   "_type": "number"
@@ -369,7 +354,23 @@
               }
             }
           ],
-          "failed": []
+          "failed": [
+            {
+              "code": 1001403002,
+              "message": "[NOT_ALLOW]不被允许的项目: ",
+              "data": null
+            },
+            {
+              "code": 1001403003,
+              "message": "[BRANCH_NOT_ALLOW]不被允许的分支: ",
+              "data": null
+            },
+            {
+              "code": 1001409001,
+              "message": "[UNFINISHED_TASK]还有未完成发布任务: ",
+              "data": null
+            }
+          ]
         }
       }
     },
@@ -413,16 +414,6 @@
                 "_type": "number",
                 "_assert": 200
               },
-              "data": {},
-              "message": {
-                "_type": "string"
-              }
-            },
-            {
-              "code": {
-                "_type": "number",
-                "_assert": 200
-              },
               "data": {
                 "id": {
                   "_type": "number"
@@ -454,7 +445,13 @@
               }
             }
           ],
-          "failed": []
+          "failed": [
+            {
+              "code": 1001403001,
+              "message": "[FORBIDDEN]没有权限: ",
+              "data": null
+            }
+          ]
         }
       }
     }

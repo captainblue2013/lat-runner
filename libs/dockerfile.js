@@ -1,7 +1,8 @@
 
 module.exports = {
-  frontend: (project) => {
+  frontend: (project, append) => {
     return `FROM nginx:latest
+${append}
 COPY . /usr/share/nginx/html/${project}
         
 CMD ["nginx","-g","daemon off;"]
