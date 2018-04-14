@@ -22,7 +22,7 @@ function envList(data){
     let tpl = `
       {1}: {2}`;
     for(let k in data){
-        result += tpl.replace('{1}',k).replace('{2}',process.env[k]||'')
+        result += tpl.replace('{1}',k).replace('{2}',process.env[k]||'""')
     }
     return result;
 }

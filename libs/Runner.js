@@ -93,11 +93,10 @@ class Runner {
             await this.error(event, 'react build failed');
             return;
           }
-          let append = `sed 's/root   \/usr\/share\/nginx\/html;/root   \/usr\/share\/nginx\/html;\n\ttry_files $uri \/usr\/share\/nginx\/html\/index.html;\n/g' default.conf`;
           if (!fs.existsSync(`${process.cwd()}/Dockerfile`)) {
             //默认的静态项目 Dockerfile
             process.chdir(`${process.cwd()}/build`)
-            fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop(), append))
+            fs.writeFileSync(process.cwd() + '/Dockerfile', dockerfile.frontend(event.project.split('/').pop()))
           }
           break;
         case 'html':
